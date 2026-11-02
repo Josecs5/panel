@@ -1,0 +1,24 @@
+# Dependencias y compilados
+node_modules/
+dist/
+
+# Secretos y datos personales: nunca al repo
+.env
+.env.*
+!.env.example
+seed.local.json
+*.local.json
+
+# Herramientas locales (las maquetas de .impeccable contienen datos reales)
+.claude/
+.impeccable/
+skills-lock.json
+
+# Emuladores de Firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+
+# Capturas de las pruebas de navegador
+.playwright-mcp/

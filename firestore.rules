@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// Este archivo está en un repo público: aquí se queda el marcador.
+// Tu UID real se pone solo en Firebase: Firestore > Reglas, sustituyendo
+// __OWNER_UID__ antes de publicar. Con el marcador, nadie tiene acceso.
+//
+// Firestore deniega todo lo que no coincide con una regla, así que cualquier
+// otra ruta queda cerrada.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == uid
+        && uid == '__OWNER_UID__';
+    }
+  }
+}

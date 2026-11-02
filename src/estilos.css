@@ -1,0 +1,414 @@
+@font-face {
+  font-family: 'Hanken Grotesk';
+  src: url('./assets/fonts/hanken-grotesk-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ibarra Real Nova';
+  src: url('./assets/fonts/ibarra-real-nova-700-latin.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light dark;
+
+  /* Módulo: toda medida es un múltiplo, como los azulejos de una placa. */
+  --m: 8px;
+
+  --fondo: #f3f6f7;
+  --superficie: #ffffff;
+  --tinta: #16213a;
+  --tinta-suave: #566078;
+  --linea: #d9dfe6;
+  --linea-fuerte: #8a94a8;
+
+  --cobalto: #1f3f8f;
+  --cobalto-hover: #18327a;
+  --acento: #1f3f8f;
+  --menu-fondo: #1f3f8f;
+  --menu-tinta: #ffffff;
+  --menu-tinta-suave: #d7e0f5;
+  --menu-hover: #2a4ea3;
+  --menu-activo-fondo: #ffffff;
+  --menu-activo-tinta: #1f3f8f;
+
+  --almagre: #8e2a2a;
+  --almagre-fondo: #f8e9e7;
+
+  --deshabilitado-fondo: #d9dfe6;
+  --deshabilitado-tinta: #566078;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #0e1422;
+    --superficie: #171f31;
+    --tinta: #edf1f8;
+    --tinta-suave: #a6b0c6;
+    --linea: #2b354a;
+    --linea-fuerte: #66718a;
+
+    --cobalto: #2c55b8;
+    --cobalto-hover: #3a64c9;
+    --acento: #9db5f2;
+    --menu-fondo: #14295f;
+    --menu-tinta: #ffffff;
+    --menu-tinta-suave: #c6d2ee;
+    --menu-hover: #1e3a80;
+    --menu-activo-fondo: #edf1f8;
+    --menu-activo-tinta: #14295f;
+
+    --almagre: #f0a39a;
+    --almagre-fondo: #3a1c1e;
+
+    --deshabilitado-fondo: #2b354a;
+    --deshabilitado-tinta: #a6b0c6;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--linea-fuerte) transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--tinta);
+  font: 400 1rem/1.45 'Hanken Grotesk', system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  caret-color: var(--acento);
+}
+
+h1,
+p {
+  margin: 0;
+}
+
+::selection {
+  background: var(--cobalto);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.icono {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.texto-suave {
+  color: var(--tinta-suave);
+}
+
+/* Acceso: login y comprobación de sesión */
+
+.acceso {
+  min-height: 100dvh;
+  padding: calc(var(--m) * 3) calc(var(--m) * 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--m) * 4);
+  background: var(--menu-fondo);
+  color: var(--menu-tinta);
+}
+
+.acceso__marca {
+  font: 700 4rem/1 'Ibarra Real Nova', Georgia, serif;
+}
+
+.acceso__estado {
+  min-height: 24px;
+  color: var(--menu-tinta-suave);
+}
+
+.acceso__formulario {
+  width: 100%;
+  max-width: 384px;
+  padding: calc(var(--m) * 4);
+  display: grid;
+  gap: calc(var(--m) * 3);
+  background: var(--superficie);
+  color: var(--tinta);
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgb(6 16 44 / 0.35);
+}
+
+.campo {
+  display: grid;
+  gap: var(--m);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.campo input {
+  width: 100%;
+  height: calc(var(--m) * 6);
+  padding: 0 calc(var(--m) * 1.5);
+  background: var(--superficie);
+  border: 1px solid var(--linea-fuerte);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 400;
+  transition: border-color 150ms ease-out;
+}
+
+.campo input:hover {
+  border-color: var(--tinta-suave);
+}
+
+.boton {
+  height: calc(var(--m) * 6);
+  padding: 0 calc(var(--m) * 3);
+  border: 0;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+}
+
+.boton--principal {
+  background: var(--cobalto);
+  color: #ffffff;
+}
+
+.boton--principal:hover:not(:disabled) {
+  background: var(--cobalto-hover);
+}
+
+.boton:disabled {
+  background: var(--deshabilitado-fondo);
+  color: var(--deshabilitado-tinta);
+  cursor: not-allowed;
+}
+
+.aviso-error {
+  padding: calc(var(--m) * 1.5);
+  background: var(--almagre-fondo);
+  color: var(--almagre);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+/* Marco de la app: escritorio */
+
+.marco {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+}
+
+.menu {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  padding: calc(var(--m) * 3) calc(var(--m) * 2);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: var(--menu-fondo);
+  color: var(--menu-tinta);
+}
+
+.menu__marca {
+  padding: 0 calc(var(--m) * 1.5) calc(var(--m) * 3);
+  font: 700 2rem/1 'Ibarra Real Nova', Georgia, serif;
+}
+
+.menu__lista {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: calc(var(--m) / 2);
+  list-style: none;
+}
+
+.menu__enlace {
+  width: 100%;
+  min-height: calc(var(--m) * 5.5);
+  padding: var(--m) calc(var(--m) * 1.5);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--m) * 1.5);
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  color: var(--menu-tinta-suave);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+}
+
+.menu__enlace:hover {
+  background: var(--menu-hover);
+  color: var(--menu-tinta);
+}
+
+.menu__enlace--activo,
+.menu__enlace--activo:hover {
+  background: var(--menu-activo-fondo);
+  color: var(--menu-activo-tinta);
+  font-weight: 700;
+}
+
+.menu :focus-visible,
+.superior :focus-visible,
+.acceso > :focus-visible {
+  outline-color: var(--menu-tinta);
+}
+
+.menu__salir {
+  margin-top: auto;
+}
+
+.superior,
+.barra {
+  display: none;
+}
+
+.pagina {
+  width: 100%;
+  max-width: 1208px;
+  padding: calc(var(--m) * 4) calc(var(--m) * 5);
+}
+
+.pagina__cabecera {
+  margin-bottom: calc(var(--m) * 4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--m) calc(var(--m) * 3);
+}
+
+.pagina__cabecera h1 {
+  font-size: 1.625rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.pagina__vacia {
+  color: var(--tinta-suave);
+}
+
+/* Marco de la app: móvil */
+
+@media (max-width: 767px) {
+  .marco {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .menu {
+    display: none;
+  }
+
+  .superior {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: calc(var(--m) * 7);
+    padding: 0 var(--m) 0 calc(var(--m) * 2);
+    display: flex;
+    align-items: center;
+    gap: var(--m);
+    background: var(--menu-fondo);
+    color: var(--menu-tinta);
+  }
+
+  .superior__marca {
+    margin-right: auto;
+    font: 700 1.625rem/1 'Ibarra Real Nova', Georgia, serif;
+  }
+
+  .superior__accion {
+    width: calc(var(--m) * 5.5);
+    height: calc(var(--m) * 5.5);
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .superior__accion--activo {
+    background: var(--menu-activo-fondo);
+    color: var(--menu-activo-tinta);
+  }
+
+  .pagina {
+    padding: calc(var(--m) * 3) calc(var(--m) * 2);
+  }
+
+  .barra {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    padding-bottom: env(safe-area-inset-bottom);
+    display: flex;
+    background: var(--superficie);
+    border-top: 1px solid var(--linea);
+  }
+
+  .barra__enlace {
+    /* Ancho según el texto: "Candidaturas" necesita más que "Inicio". */
+    flex: 1 1 auto;
+    min-height: calc(var(--m) * 7);
+    padding: calc(var(--m) * 0.75) 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--m) / 4);
+    color: var(--tinta-suave);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .barra__enlace--activo {
+    color: var(--acento);
+    font-weight: 700;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

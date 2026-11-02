@@ -1,0 +1,32 @@
+{
+  "name": "panel",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"src/**/*.test.ts\"",
+    "test:rules": "npx --yes firebase-tools@15.34.2 emulators:exec --only firestore --project demo-panel \"node --test tests/firestore.rules.test.mjs\"",
+    "emulators": "npx --yes firebase-tools@15.34.2 emulators:start --only auth,firestore --project demo-panel"
+  },
+  "dependencies": {
+    "firebase": "^13.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}
