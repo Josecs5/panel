@@ -18,12 +18,27 @@ Chart.defaults.font.family = "'Hanken Grotesk', system-ui, sans-serif";
 const TODOS = 'todos';
 const aTiempo = (fecha: string) => Date.parse(`${fecha}T12:00:00Z`);
 const EJE_FECHA = new Intl.DateTimeFormat('es-ES', { timeZone: 'UTC', month: 'short', year: '2-digit' });
+const EJE_MES = new Intl.DateTimeFormat('es-ES', { timeZone: 'UTC', month: 'short' });
 const EJE_DIA = new Intl.DateTimeFormat('es-ES', { timeZone: 'UTC', day: 'numeric', month: 'short' });
 const EJE_EUROS = new Intl.NumberFormat('es-ES', {
   style: 'currency',
   currency: 'EUR',
   maximumFractionDigits: 0,
 });
+
+/** Marcas a principio de mes, a intervalos regulares: como mucho unas seis. */
+function marcasMensuales(inicio: number, fin: number): number[] {
+  const desde = new Date(inicio);
+  const hasta = new Date(fin);
+  const meses =
+    (hasta.getUTCFullYear() - desde.getUTCFullYear()) * 12 + hasta.getUTCMonth() - desde.getUTCMonth();
+  const paso = Math.max(1, Math.ceil(meses / 6));
+  const marcas: number[] = [];
+  for (let i = 1; i <= meses; i += paso) {
+    marcas.push(Date.UTC(desde.getUTCFullYear(), desde.getUTCMonth() + i, 1));
+  }
+  return marcas;
+}
 
 const lineaVertical: Plugin<'line'> = {
   id: 'lineaVertical',
@@ -85,7 +100,12 @@ export default function GraficoValor({
     const superficie = color('--fondo');
     const inicio = aTiempo(serie[0].fecha);
     const fin = aTiempo(serie[serie.length - 1].fecha);
-    const menosDeUnAno = fin - inicio < 330 * 86_400_000;
+    // En un periodo corto no hay meses que marcar: se marcan las fechas reales de los datos.
+    const mensuales = marcasMensuales(inicio, fin);
+    const porMeses = mensuales.length >= 2;
+    const marcas = porMeses ? mensuales : serie.map((p) => aTiempo(p.fecha));
+    const cruzaAno = new Date(inicio).getUTCFullYear() !== new Date(fin).getUTCFullYear();
+    const formatoEje = !porMeses ? EJE_DIA : cruzaAno ? EJE_FECHA : EJE_MES;
 
     const grafico = new Chart(lienzo.current, {
       type: 'line',
@@ -135,11 +155,14 @@ export default function GraficoValor({
             max: fin,
             grid: { display: false },
             border: { color: color('--linea') },
+            afterBuildTicks: (eje) => {
+              eje.ticks = marcas.map((value) => ({ value }));
+            },
             ticks: {
               color: color('--tinta-suave'),
-              maxTicksLimit: 6,
+              autoSkip: false,
               maxRotation: 0,
-              callback: (v) => (menosDeUnAno ? EJE_DIA : EJE_FECHA).format(new Date(Number(v))),
+              callback: (v) => formatoEje.format(new Date(Number(v))),
             },
           },
           y: {
@@ -207,6 +230,7 @@ export default function GraficoValor({
               <span className="leyenda__marca leyenda__marca--aportado" aria-hidden="true" />
               Aportado <strong>{moneda(ultimo.aportado)}</strong>
             </li>
+            <li className="texto-pequeno">a {fechaCorta(ultimo.fecha)}</li>
           </ul>
           <div className="grafico__lienzo">
             <canvas

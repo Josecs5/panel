@@ -293,8 +293,7 @@ export function Cartera() {
           )}
         </section>
         <section className="bloque" aria-labelledby="cartera-mercado">
-          <h2 id="cartera-mercado">Mercado de EE. UU.</h2>
-          <BloqueNasdaq />
+          <BloqueNasdaq id="cartera-mercado" />
         </section>
         {c.avisoAportacion && (
           <section className="bloque bloque--aviso" aria-labelledby="cartera-aviso">

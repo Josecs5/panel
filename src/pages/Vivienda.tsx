@@ -27,15 +27,18 @@ import {
 
 const NUEVA = 'nueva';
 
-/** La placa solo cuenta días reales; si no hay cuenta atrás, dice por qué. */
+const seAcabo = ({ estado }: Convocatoria) => estado === 'cerrada' || estado === 'sorteada';
+
+/** La placa solo lleva cuentas atrás; sin una, queda el hueco para que las filas sigan alineadas. */
 function PlacaConvocatoria({ convocatoria, hoy }: { convocatoria: Convocatoria; hoy: string }) {
-  const { finPlazo, estado } = convocatoria;
-  if (estado === 'cerrada' || estado === 'sorteada') {
-    return <div className="placa placa--neutra">{ETIQUETA_ESTADO[estado]}</div>;
-  }
-  if (!finPlazo) return <div className="placa placa--neutra">Sin fecha</div>;
-  const dias = diasEntre(hoy, finPlazo);
-  return dias < 0 ? <div className="placa placa--neutra">Vencida</div> : <PlacaDias dias={dias} />;
+  const dias = convocatoria.finPlazo ? diasEntre(hoy, convocatoria.finPlazo) : -1;
+  return !seAcabo(convocatoria) && dias >= 0 ? <PlacaDias dias={dias} /> : <div className="placa-hueco" />;
+}
+
+function textoFinPlazo(c: Convocatoria, hoy: string) {
+  if (!c.finPlazo) return 'Sin fecha de fin';
+  const vencida = !seAcabo(c) && c.finPlazo < hoy;
+  return `${vencida ? 'Plazo vencido' : 'Fin'}: ${fechaCorta(c.finPlazo)}`;
 }
 
 function Fila({
@@ -59,7 +62,7 @@ function Fila({
           <span>{c.municipio}</span>
           <span>{c.tipo}</span>
           <span className={`estado estado--${c.estado}`}>{ETIQUETA_ESTADO[c.estado]}</span>
-          {c.finPlazo && <span>Fin: {fechaCorta(c.finPlazo)}</span>}
+          <span>{textoFinPlazo(c, hoy)}</span>
         </p>
       </div>
       <div className="plazo__acciones">

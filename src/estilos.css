@@ -44,11 +44,11 @@
 
   /* Pigmentos por categoría: cada uno significa lo mismo en toda la app. */
   --cat-viaje: #1f3f8f;
-  --cat-tramites: #47556b;
+  --cat-tramites: #0a6a86;
   --cat-trabajo: #85590a;
-  --cat-inversion: #256b5b;
-  --cat-personal: #5b3a6e;
-  --cat-vivienda: #8a4a1f;
+  --cat-inversion: #2c6e34;
+  --cat-personal: #6b2d8b;
+  --cat-vivienda: #8f4a63;
 
   /* Series del gráfico, validadas para daltonismo sobre --fondo. */
   --serie-valor: #2f5bc4;
@@ -56,8 +56,7 @@
 
   --columna: #e6ebef;
   --positivo: #256b5b;
-  --aviso-fondo: #f7efdc;
-  --aviso-tinta: #5f4106;
+  --falta-tinta: #6f4a07;
 
   --deshabilitado-fondo: #d9dfe6;
   --deshabilitado-tinta: #566078;
@@ -88,20 +87,19 @@
     --placa: #2c55b8;
     --placa-urgente: #a33a35;
 
-    --cat-viaje: #9db5f2;
-    --cat-tramites: #b4bfd2;
+    --cat-viaje: #86aaf7;
+    --cat-tramites: #5fc4dc;
     --cat-trabajo: #e0b04f;
-    --cat-inversion: #62c3a8;
-    --cat-personal: #c5a6dd;
-    --cat-vivienda: #e3a27a;
+    --cat-inversion: #7fcf86;
+    --cat-personal: #d39be6;
+    --cat-vivienda: #d99ab2;
 
     --serie-valor: #5c82e6;
     --serie-aportado: #b8821a;
 
     --columna: #131a2b;
     --positivo: #62c3a8;
-    --aviso-fondo: #33290f;
-    --aviso-tinta: #f0d28a;
+    --falta-tinta: #f0d28a;
 
     --deshabilitado-fondo: #2b354a;
     --deshabilitado-tinta: #a6b0c6;
@@ -117,6 +115,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   scrollbar-color: var(--linea-fuerte) transparent;
+  /* El borde derecho no salta entre páginas con y sin barra de desplazamiento. */
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -470,6 +470,11 @@ a {
   gap: calc(var(--m) * 3);
 }
 
+.inicio__lateral > .bloque:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
 .bloque {
   padding-bottom: calc(var(--m) * 3);
   display: grid;
@@ -535,8 +540,55 @@ a {
   font-size: 0.875rem;
 }
 
+/* Acciones de fila: disponibles pero sin competir con los datos. */
+.plazo__acciones .boton--secundario:not(.boton--peq) {
+  padding-inline: calc(var(--m) * 1.25);
+  background: transparent;
+  box-shadow: none;
+  color: var(--tinta-suave);
+  font-weight: 600;
+}
+
+.plazo__acciones .boton--secundario:not(.boton--peq):hover {
+  background: var(--linea);
+  color: var(--tinta);
+}
+
+.plazo__acciones .enlace {
+  font-size: 0.875rem;
+}
+
+/* El texto del último botón sin borde se alinea con el margen derecho del contenido. */
+.plazo__acciones > .boton--secundario:not(.boton--peq):last-child,
+.plazo__acciones .confirmar > .boton--secundario:last-child {
+  margin-right: calc(var(--m) * -1.25);
+}
+
+/* Con nota, la placa ocupa dos filas para que la nota siga pegada al título. */
+.plazo:has(.plazo__detalle) {
+  align-items: start;
+}
+
+.plazo:has(.plazo__detalle) > .placa,
+.plazo:has(.plazo__detalle) > .placa-hueco {
+  grid-row: 1 / span 2;
+}
+
+.plazo:has(.plazo__detalle) > .plazo__acciones {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+
+.plazo--archivado:has(.plazo__detalle) > .plazo__acciones {
+  grid-column: 2;
+}
+
+.placa-hueco {
+  width: 72px;
+}
+
 .plazo__detalle {
-  grid-column: 2 / -1;
+  grid-column: 2;
   display: grid;
   justify-items: start;
   gap: calc(var(--m) / 2);
@@ -544,7 +596,7 @@ a {
 }
 
 .plazo--archivado .plazo__detalle {
-  grid-column: 1 / -1;
+  grid-column: 1;
 }
 
 .plazo__nota {
@@ -598,7 +650,19 @@ a {
 }
 
 .categoria {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 600;
+}
+
+/* Un azulejo pequeño: el pigmento se reconoce antes de leer la palabra. */
+.categoria::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: currentColor;
 }
 
 .categoria--viaje {
@@ -726,11 +790,14 @@ a {
   font-weight: 600;
 }
 
-.mercado {
+.mercado,
+.bloque h2.mercado {
   display: flex;
   align-items: center;
   gap: var(--m);
+  color: var(--tinta);
   font-size: 1.125rem;
+  line-height: 1.45;
   font-weight: 700;
 }
 
@@ -750,16 +817,17 @@ a {
   background: var(--serie-aportado);
 }
 
+/* Avisos: superficie blanca y título ocre; lo urgente siguen siendo las placas.
+   Sin azulejo: ese signo significa categoría en toda la app. */
 .bloque--aviso {
   padding: calc(var(--m) * 2);
-  background: var(--aviso-fondo);
-  color: var(--aviso-tinta);
+  background: var(--superficie);
   border: 0;
   border-radius: 8px;
 }
 
 .bloque--aviso h2 {
-  color: inherit;
+  color: var(--cat-trabajo);
 }
 
 .avisos {
@@ -767,9 +835,8 @@ a {
   padding: calc(var(--m) * 1.5) calc(var(--m) * 2);
   display: grid;
   gap: var(--m);
-  background: var(--aviso-fondo);
-  color: var(--aviso-tinta);
-  border-radius: 4px;
+  background: var(--superficie);
+  border-radius: 8px;
   font-size: 0.875rem;
   list-style: none;
 }
@@ -792,7 +859,12 @@ a {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: calc(var(--m) * 3) calc(var(--m) * 5);
-  align-items: start;
+  /* Misma altura: las dos reglas inferiores quedan alineadas. */
+  align-items: stretch;
+}
+
+.cartera__resumen .bloque {
+  align-content: start;
 }
 
 .cartera__resumen .bloque--aviso {
@@ -883,7 +955,7 @@ a {
 }
 
 .tabla__falta {
-  color: var(--aviso-tinta);
+  color: var(--falta-tinta);
   font-weight: 600;
 }
 
@@ -894,6 +966,14 @@ a {
 
 .tabla .tabla__formulario {
   padding: 0;
+}
+
+/* El marco reserva el margen del último botón: su texto llega al borde sin crear scroll. */
+@media (min-width: 1280px) {
+  .tabla-marco {
+    margin-right: calc(var(--m) * -1.25);
+    padding-right: calc(var(--m) * 1.25);
+  }
 }
 
 .confirmar__aviso {
@@ -1012,6 +1092,12 @@ a {
   border-top: 1px solid var(--linea);
 }
 
+/* El texto cede antes de que los botones bajen de línea, en las dos listas por igual. */
+.registro__fila > div:first-child {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
 .registro__principal {
   font-weight: 600;
 }
@@ -1031,16 +1117,6 @@ a {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--m) calc(var(--m) * 3);
-}
-
-.placa--neutra {
-  padding-inline: 4px;
-  background: transparent;
-  color: var(--tinta-suave);
-  box-shadow: inset 0 0 0 1px var(--linea-fuerte);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
 }
 
 .estado {
@@ -1156,8 +1232,26 @@ a {
   background: var(--almagre-fondo);
 }
 
+.tarjeta__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--m);
+}
+
 .tarjeta__empresa {
   font-weight: 700;
+}
+
+.tarjeta__asa {
+  margin: -2px -6px 0 0;
+  color: var(--tinta-suave);
+}
+
+.tarjeta__asa .icono {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.5;
 }
 
 .tarjeta__salario {
@@ -1191,15 +1285,30 @@ a {
   font-weight: 500;
 }
 
-.tarjeta__fase select {
-  min-height: calc(var(--m) * 4.5);
-  padding-inline: var(--m);
-  font-size: 0.8125rem;
+.tarjeta__fecha {
+  display: block;
 }
 
-.tarjeta__editar {
-  margin-top: 4px;
-  width: 100%;
+.tarjeta__fase select {
+  min-height: calc(var(--m) * 4.5);
+  padding-inline: 2px;
+  color: var(--tinta);
+  font-size: 0.75rem;
+}
+
+.tarjeta .tarjeta__editar {
+  justify-self: start;
+  height: calc(var(--m) * 4.5);
+  padding-inline: var(--m);
+  margin: 2px 0 0 calc(var(--m) * -1);
+  background: transparent;
+  box-shadow: none;
+  color: var(--tinta-suave);
+}
+
+.tarjeta .tarjeta__editar:hover {
+  background: var(--linea);
+  color: var(--tinta);
 }
 
 .formulario--tres {
@@ -1310,7 +1419,7 @@ a {
 }
 
 /* A menos anchura, cada fila de la tabla pasa a ser un bloque con sus etiquetas. */
-@media (max-width: 1199px) {
+@media (max-width: 1279px) {
   .tabla:not(.tabla--simple) thead {
     position: absolute;
     width: 1px;
@@ -1473,8 +1582,10 @@ a {
 
   /* Nota y botones se alinean con el texto, bajo la placa no. */
   .plazo__acciones,
-  .plazo__detalle {
+  .plazo__detalle,
+  .plazo:has(.plazo__detalle) > .plazo__acciones {
     grid-column: 2;
+    grid-row: auto;
   }
 
   .plazo__detalle {
@@ -1485,13 +1596,68 @@ a {
     order: 2;
   }
 
+  /* En móvil los botones van a la izquierda: se alinea con el texto el primero. */
+  .plazo__acciones > .boton--secundario:not(.boton--peq):first-child {
+    margin-left: calc(var(--m) * -1.25);
+  }
+
+  .plazo__acciones > .boton--secundario:not(.boton--peq):last-child,
+  .plazo__acciones .confirmar > .boton--secundario:last-child {
+    margin-right: 0;
+  }
+
+  /* Aportaciones y valores: los botones suben a la línea del importe. */
+  .registro__fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .registro__fila > div:first-child {
+    display: contents;
+  }
+
+  .registro__principal {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .registro__fila .texto-pequeno {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .registro__fila .plazo__acciones {
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
+  }
+
+  .registro__fila .plazo__acciones > .boton--secundario:not(.boton--peq):first-child {
+    margin-left: 0;
+  }
+
+  .registro__fila .plazo__acciones > .boton--secundario:not(.boton--peq):last-child,
+  .registro__fila .plazo__acciones .confirmar > .boton--secundario:last-child {
+    margin-right: calc(var(--m) * -1.25);
+  }
+
   .plazo--archivado .plazo__acciones,
-  .plazo--archivado .plazo__detalle {
+  .plazo--archivado .plazo__detalle,
+  .plazo--archivado:has(.plazo__detalle) > .plazo__acciones {
     grid-column: 1;
   }
 
   .plazo__acciones .boton {
     height: calc(var(--m) * 5.5);
+  }
+
+  .tarjeta .tarjeta__editar {
+    height: calc(var(--m) * 5.5);
+  }
+
+  .tarjeta__asa {
+    display: none;
   }
 
   .barra {

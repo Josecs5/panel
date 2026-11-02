@@ -32,7 +32,7 @@ function BotonCopiar({ texto }: { texto: string }) {
   }
 
   return (
-    <button type="button" className="boton boton--principal boton--peq" onClick={copiar} aria-live="polite">
+    <button type="button" className="boton boton--secundario boton--peq" onClick={copiar} aria-live="polite">
       {estado === 'inicial' && 'Copiar'}
       {estado === 'copiado' && 'Copiado'}
       {estado === 'error' && 'No se pudo copiar'}

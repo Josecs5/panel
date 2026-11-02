@@ -94,8 +94,7 @@ export function Inicio() {
             ))}
           </section>
           <section className="bloque" aria-labelledby="inicio-mercado">
-            <h2 id="inicio-mercado">Mercado de EE. UU.</h2>
-            <BloqueNasdaq />
+            <BloqueNasdaq id="inicio-mercado" />
           </section>
           <section className="bloque" aria-labelledby="inicio-vivienda">
             <div className="seccion__titulo seccion__titulo--junto">

@@ -2,6 +2,7 @@ import { useState, type DragEvent, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { BorrarConConfirmacion } from '../components/BorrarConConfirmacion';
 import { Cabecera } from '../components/Cabecera';
+import { Icono } from '../components/Icono';
 import {
   aCandidatura,
   AREA_OTRA,
@@ -38,7 +39,9 @@ function Tarjeta({
 }) {
   const bajo = estaBajoMinimo(c.salario, minimo);
   const enlace = enlaceSeguro(c.enlace);
-  const detalle = [c.area, c.modalidad].filter(Boolean).join(' · ');
+  // El área se omite si solo repite el puesto.
+  const area = c.area.toLocaleLowerCase('es') === c.puesto.toLocaleLowerCase('es') ? '' : c.area;
+  const detalle = [area, c.modalidad].filter(Boolean).join(' · ');
 
   function empezarArrastre(evento: DragEvent) {
     evento.dataTransfer.setData('text/plain', c.id);
@@ -47,7 +50,12 @@ function Tarjeta({
 
   return (
     <li className={bajo ? 'tarjeta tarjeta--baja' : 'tarjeta'} draggable onDragStart={empezarArrastre}>
-      <p className="tarjeta__empresa">{c.empresa}</p>
+      <div className="tarjeta__cabecera">
+        <p className="tarjeta__empresa">{c.empresa}</p>
+        <span className="tarjeta__asa" title="Arrastra para cambiar de fase">
+          <Icono nombre="asa" />
+        </span>
+      </div>
       <p className="tarjeta__puesto">{c.puesto}</p>
       {detalle && <p className="texto-pequeno">{detalle}</p>}
       {c.salario !== null && (
@@ -59,7 +67,9 @@ function Tarjeta({
       {c.proximoPaso && (
         <p className="tarjeta__paso">
           {c.proximoPaso}
-          {c.proximoPasoFecha && <span className="texto-pequeno"> · {fechaCorta(c.proximoPasoFecha)}</span>}
+          {c.proximoPasoFecha && (
+            <span className="texto-pequeno tarjeta__fecha">{fechaCorta(c.proximoPasoFecha)}</span>
+          )}
         </p>
       )}
       {enlace && (

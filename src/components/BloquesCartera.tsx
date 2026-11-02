@@ -45,8 +45,8 @@ export function BloqueValorCartera({
   );
 }
 
-/** Estado del Nasdaq en este momento; se recalcula solo. */
-export function BloqueNasdaq() {
+/** Estado del Nasdaq en este momento; el propio estado es el título. Se recalcula solo. */
+export function BloqueNasdaq({ id }: { id: string }) {
   const [ahora, setAhora] = useState(() => new Date());
   useEffect(() => {
     const intervalo = setInterval(() => setAhora(new Date()), 30_000);
@@ -56,10 +56,10 @@ export function BloqueNasdaq() {
   const { estado, sesion, proximaApertura, calendarioCubierto } = estadoMercado(ahora);
   return (
     <>
-      <p className="mercado">
+      <h2 id={id} className="mercado">
         <span className={`mercado__punto mercado__punto--${estado}`} aria-hidden="true" />
         Nasdaq: {ETIQUETA_ESTADO[estado]}
-      </p>
+      </h2>
       {estado === 'abierto' && sesion && (
         <p className="texto-suave">
           Cierra {cuandoEnMadrid(sesion.cierre, ahora)}
