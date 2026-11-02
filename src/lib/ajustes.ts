@@ -1,8 +1,13 @@
+import { limpiarLista } from './prompts.ts';
+
 export type Ajustes = {
   finnhubKey: string;
   salarioMinimo: number | null;
   aportacionPorFondo: number;
   diaCobro: number | null;
+  /** Viven aquí y no en el código porque el repositorio es público. */
+  municipios: string[];
+  areas: string[];
 };
 
 export const AJUSTES_INICIALES: Ajustes = {
@@ -10,6 +15,8 @@ export const AJUSTES_INICIALES: Ajustes = {
   salarioMinimo: null,
   aportacionPorFondo: 250,
   diaCobro: null,
+  municipios: [],
+  areas: [],
 };
 
 const esImporte = (valor: unknown): valor is number =>
@@ -27,6 +34,8 @@ export function aAjustesParciales(crudo: Record<string, unknown>): Partial<Ajust
   }
   if (esImporte(crudo.aportacionPorFondo)) ajustes.aportacionPorFondo = crudo.aportacionPorFondo;
   if (esDiaDeCobro(crudo.diaCobro) || crudo.diaCobro === null) ajustes.diaCobro = crudo.diaCobro;
+  if (Array.isArray(crudo.municipios)) ajustes.municipios = limpiarLista(crudo.municipios);
+  if (Array.isArray(crudo.areas)) ajustes.areas = limpiarLista(crudo.areas);
   return ajustes;
 }
 

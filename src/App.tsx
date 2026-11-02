@@ -1,21 +1,15 @@
-import type { ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { LimiteDeError } from './components/LimiteDeError';
-import { Marco, SECCIONES } from './components/Marco';
+import { Marco } from './components/Marco';
 import { useSesion } from './lib/sesion';
 import { Ajustes } from './pages/Ajustes';
+import { Candidaturas } from './pages/Candidaturas';
 import { Cartera } from './pages/Cartera';
 import { Inicio } from './pages/Inicio';
 import { Login } from './pages/Login';
 import { Plazos } from './pages/Plazos';
-import { SeccionPendiente } from './pages/SeccionPendiente';
-
-const PAGINAS: Record<string, ReactElement> = {
-  '/': <Inicio />,
-  '/plazos': <Plazos />,
-  '/cartera': <Cartera />,
-  '/ajustes': <Ajustes />,
-};
+import { Prompts } from './pages/Prompts';
+import { Vivienda } from './pages/Vivienda';
 
 export default function App() {
   const { cargando, usuario } = useSesion();
@@ -37,13 +31,13 @@ export default function App() {
     <Marco>
       <LimiteDeError>
         <Routes>
-          {SECCIONES.map(({ ruta, nombre, fase }) => (
-            <Route
-              key={ruta}
-              path={ruta}
-              element={PAGINAS[ruta] ?? <SeccionPendiente nombre={nombre} fase={fase} />}
-            />
-          ))}
+          <Route path="/" element={<Inicio />} />
+          <Route path="/plazos" element={<Plazos />} />
+          <Route path="/cartera" element={<Cartera />} />
+          <Route path="/vivienda" element={<Vivienda />} />
+          <Route path="/candidaturas" element={<Candidaturas />} />
+          <Route path="/prompts" element={<Prompts />} />
+          <Route path="/ajustes" element={<Ajustes />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </LimiteDeError>

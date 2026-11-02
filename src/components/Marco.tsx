@@ -3,14 +3,14 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useSesion } from '../lib/sesion';
 import { Icono, type NombreIcono } from './Icono';
 
-export const SECCIONES: { ruta: string; nombre: string; icono: NombreIcono; fase: number }[] = [
-  { ruta: '/', nombre: 'Inicio', icono: 'inicio', fase: 2 },
-  { ruta: '/plazos', nombre: 'Plazos', icono: 'plazos', fase: 2 },
-  { ruta: '/cartera', nombre: 'Cartera', icono: 'cartera', fase: 3 },
-  { ruta: '/vivienda', nombre: 'Vivienda', icono: 'vivienda', fase: 4 },
-  { ruta: '/candidaturas', nombre: 'Candidaturas', icono: 'candidaturas', fase: 4 },
-  { ruta: '/prompts', nombre: 'Prompts', icono: 'prompts', fase: 4 },
-  { ruta: '/ajustes', nombre: 'Ajustes', icono: 'ajustes', fase: 2 },
+const SECCIONES: { ruta: string; nombre: string; icono: NombreIcono }[] = [
+  { ruta: '/', nombre: 'Inicio', icono: 'inicio' },
+  { ruta: '/plazos', nombre: 'Plazos', icono: 'plazos' },
+  { ruta: '/cartera', nombre: 'Cartera', icono: 'cartera' },
+  { ruta: '/vivienda', nombre: 'Vivienda', icono: 'vivienda' },
+  { ruta: '/candidaturas', nombre: 'Candidaturas', icono: 'candidaturas' },
+  { ruta: '/prompts', nombre: 'Prompts', icono: 'prompts' },
+  { ruta: '/ajustes', nombre: 'Ajustes', icono: 'ajustes' },
 ];
 
 // En el móvil, Ajustes y Cerrar sesión van arriba: abajo solo caben seis secciones.

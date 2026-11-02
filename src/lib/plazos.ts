@@ -12,6 +12,14 @@ export type DatosPlazo = {
 };
 export type Plazo = DatosPlazo & { id: string };
 
+/** Un plazo tal como se lista: propio o derivado de una convocatoria de vivienda. */
+export type CategoriaVista = Categoria | 'Vivienda';
+export type PlazoListado = Omit<Plazo, 'categoria'> & {
+  categoria: CategoriaVista;
+  origen?: 'vivienda';
+};
+export const esPlazoPropio = (plazo: PlazoListado): plazo is Plazo => plazo.origen === undefined;
+
 const esCategoria = (valor: unknown): valor is Categoria =>
   CATEGORIAS.includes(valor as Categoria);
 
@@ -34,11 +42,13 @@ export function aPlazo(id: string, crudo: Record<string, unknown>): Plazo | null
   return datos && { id, ...datos };
 }
 
-const porFecha = (a: Plazo, b: Plazo) =>
+type ConFecha = { fecha: string; titulo: string };
+
+const porFecha = (a: ConFecha, b: ConFecha) =>
   a.fecha.localeCompare(b.fecha) || a.titulo.localeCompare(b.titulo, 'es');
 
 /** Lo pasado se archiva solo: un plazo de hoy todavía cuenta como próximo. */
-export function separarPlazos(plazos: Plazo[], hoy: string) {
+export function separarPlazos<T extends ConFecha>(plazos: T[], hoy: string) {
   const ordenados = [...plazos].sort(porFecha);
   return {
     proximos: ordenados.filter((p) => p.fecha >= hoy),

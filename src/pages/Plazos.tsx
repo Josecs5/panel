@@ -3,19 +3,20 @@ import { Link } from 'react-router-dom';
 import { BorrarConConfirmacion } from '../components/BorrarConConfirmacion';
 import { Cabecera } from '../components/Cabecera';
 import { ResumenPlazo } from '../components/PlazoVista';
-import { borrarElemento, guardarElemento, useColeccion } from '../lib/datos';
+import { borrarElemento, guardarElemento } from '../lib/datos';
 import { fechaCorta } from '../lib/fechas';
 import {
-  aPlazo,
   CATEGORIAS,
   enlaceSeguro,
+  esPlazoPropio,
   separarPlazos,
   type Categoria,
   type DatosPlazo,
-  type Plazo,
+  type PlazoListado,
 } from '../lib/plazos';
 import { useSesion } from '../lib/sesion';
 import { useHoy } from '../lib/useHoy';
+import { usePlazos } from '../lib/usePlazos';
 import { EsqueletoPlazos } from './Inicio';
 
 const VACIO = (hoy: string): DatosPlazo => ({
@@ -29,7 +30,7 @@ const VACIO = (hoy: string): DatosPlazo => ({
 export function Plazos() {
   const uid = useSesion().usuario!.uid;
   const hoy = useHoy();
-  const { estado, datos } = useColeccion(uid, 'plazos', aPlazo);
+  const { estado, datos } = usePlazos(uid);
   const { proximos, archivados } = separarPlazos(datos, hoy);
   // 'nuevo' para el alta; el id del plazo para la edición.
   const [editando, setEditando] = useState<string | null>(null);
@@ -52,8 +53,8 @@ export function Plazos() {
     );
   }
 
-  const fila = (plazo: Plazo, archivado = false) =>
-    editando === plazo.id ? (
+  const fila = (plazo: PlazoListado, archivado = false) =>
+    esPlazoPropio(plazo) && editando === plazo.id ? (
       <li key={plazo.id} className="plazo-formulario">
         <FormularioPlazo
           inicial={plazo}
@@ -142,7 +143,7 @@ function FilaPlazo({
   onEditar,
   onBorrar,
 }: {
-  plazo: Plazo;
+  plazo: PlazoListado;
   hoy: string;
   archivado: boolean;
   onEditar: () => void;
@@ -163,10 +164,18 @@ function FilaPlazo({
         <ResumenPlazo plazo={plazo} hoy={hoy} />
       )}
       <div className="plazo__acciones">
-        <button type="button" className="boton boton--secundario" onClick={onEditar}>
-          Editar
-        </button>
-        <BorrarConConfirmacion onBorrar={onBorrar} />
+        {esPlazoPropio(plazo) ? (
+          <>
+            <button type="button" className="boton boton--secundario" onClick={onEditar}>
+              Editar
+            </button>
+            <BorrarConConfirmacion onBorrar={onBorrar} />
+          </>
+        ) : (
+          <Link className="enlace" to="/vivienda">
+            Ver en Vivienda
+          </Link>
+        )}
       </div>
       {(plazo.nota || enlace) && (
         <div className="plazo__detalle">

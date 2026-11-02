@@ -48,11 +48,13 @@
   --cat-trabajo: #85590a;
   --cat-inversion: #256b5b;
   --cat-personal: #5b3a6e;
+  --cat-vivienda: #8a4a1f;
 
   /* Series del gráfico, validadas para daltonismo sobre --fondo. */
   --serie-valor: #2f5bc4;
   --serie-aportado: #a9700a;
 
+  --columna: #e6ebef;
   --positivo: #256b5b;
   --aviso-fondo: #f7efdc;
   --aviso-tinta: #5f4106;
@@ -91,10 +93,12 @@
     --cat-trabajo: #e0b04f;
     --cat-inversion: #62c3a8;
     --cat-personal: #c5a6dd;
+    --cat-vivienda: #e3a27a;
 
     --serie-valor: #5c82e6;
     --serie-aportado: #b8821a;
 
+    --columna: #131a2b;
     --positivo: #62c3a8;
     --aviso-fondo: #33290f;
     --aviso-tinta: #f0d28a;
@@ -617,6 +621,10 @@ a {
   color: var(--cat-personal);
 }
 
+.categoria--vivienda {
+  color: var(--cat-vivienda);
+}
+
 .plazo-formulario {
   padding: calc(var(--m) * 3);
   border-top: 1px solid var(--linea);
@@ -1015,6 +1023,292 @@ a {
   font-weight: 400;
 }
 
+/* Vivienda */
+
+.filtros {
+  margin-bottom: calc(var(--m) * 3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--m) calc(var(--m) * 3);
+}
+
+.placa--neutra {
+  padding-inline: 4px;
+  background: transparent;
+  color: var(--tinta-suave);
+  box-shadow: inset 0 0 0 1px var(--linea-fuerte);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.estado {
+  font-weight: 600;
+}
+
+.estado--abierta {
+  color: var(--positivo);
+}
+
+.estado--proxima {
+  color: var(--cat-trabajo);
+}
+
+.enlace--boton {
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Inicio: listas breves del lateral */
+
+.lista-breve {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: calc(var(--m) * 1.5);
+  list-style: none;
+}
+
+.lista-breve li {
+  display: grid;
+  gap: 2px;
+}
+
+.lista-breve__titulo {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Candidaturas */
+
+.tablero {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: calc(var(--m) * 1.5);
+  align-items: start;
+}
+
+.tablero__vacio {
+  margin-bottom: calc(var(--m) * 3);
+}
+
+.columna {
+  min-height: calc(var(--m) * 20);
+  padding: var(--m);
+  background: var(--columna);
+  border-radius: 8px;
+  transition: box-shadow 150ms ease-out;
+}
+
+.columna--encima {
+  box-shadow: inset 0 0 0 2px var(--acento);
+}
+
+.columna__titulo {
+  margin: 4px 4px calc(var(--m) * 1.5);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--m);
+  color: var(--tinta);
+  font-size: 0.8125rem;
+}
+
+.columna__numero {
+  color: var(--tinta-suave);
+  font-weight: 500;
+}
+
+.columna__vacia {
+  margin: 0 4px;
+  color: var(--tinta-suave);
+  font-size: 0.8125rem;
+}
+
+.columna__lista {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--m);
+  list-style: none;
+}
+
+.tarjeta {
+  padding: calc(var(--m) * 1.5);
+  display: grid;
+  gap: calc(var(--m) / 2);
+  background: var(--superficie);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgb(22 33 58 / 0.14);
+  font-size: 0.875rem;
+  cursor: grab;
+  overflow-wrap: anywhere;
+}
+
+.tarjeta:active {
+  cursor: grabbing;
+}
+
+.tarjeta--baja {
+  background: var(--almagre-fondo);
+}
+
+.tarjeta__empresa {
+  font-weight: 700;
+}
+
+.tarjeta__salario {
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.tarjeta__salario--bajo {
+  color: var(--almagre);
+}
+
+.tarjeta__aviso {
+  display: block;
+  font-size: 0.75rem;
+}
+
+.tarjeta__paso {
+  margin-top: 4px;
+}
+
+.tarjeta__enlace {
+  width: fit-content;
+  font-size: 0.8125rem;
+}
+
+.tarjeta__fase {
+  margin-top: var(--m);
+  gap: 2px;
+  color: var(--tinta-suave);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.tarjeta__fase select {
+  min-height: calc(var(--m) * 4.5);
+  padding-inline: var(--m);
+  font-size: 0.8125rem;
+}
+
+.tarjeta__editar {
+  margin-top: 4px;
+  width: 100%;
+}
+
+.formulario--tres {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.formulario__doble {
+  grid-column: span 2;
+}
+
+.formulario__borrar {
+  margin-left: auto;
+}
+
+/* Prompts */
+
+.filtros--prompts {
+  align-items: flex-start;
+}
+
+.filtros__busqueda {
+  flex: 1 1 320px;
+}
+
+.filtros__busqueda input {
+  flex: 1;
+  min-height: calc(var(--m) * 5);
+}
+
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--m) / 2);
+}
+
+.etiqueta {
+  min-height: calc(var(--m) * 5);
+  padding: 0 calc(var(--m) * 1.5);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--linea-fuerte);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 150ms ease-out;
+}
+
+.etiqueta:hover {
+  background: var(--linea);
+}
+
+.etiqueta[aria-pressed='true'] {
+  background: var(--cobalto);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.prompt {
+  padding: calc(var(--m) * 1.5) 0;
+  border-top: 1px solid var(--linea);
+}
+
+.prompt__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--m) calc(var(--m) * 2);
+}
+
+.prompt__cabecera .plazo__cuerpo {
+  flex: 1 1 280px;
+}
+
+.prompt__etiqueta {
+  color: var(--tinta);
+}
+
+.prompt__etiqueta::before {
+  content: '#';
+  color: var(--tinta-suave);
+}
+
+.prompt__texto {
+  margin-top: var(--m);
+  font-size: 0.875rem;
+}
+
+.prompt__texto summary {
+  overflow: hidden;
+  color: var(--tinta-suave);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.prompt__texto[open] summary {
+  white-space: normal;
+}
+
+.prompt__texto p {
+  margin-top: var(--m);
+  padding: calc(var(--m) * 1.5);
+  background: var(--superficie);
+  border-radius: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 /* A menos anchura, cada fila de la tabla pasa a ser un bloque con sus etiquetas. */
 @media (max-width: 1199px) {
   .tabla:not(.tabla--simple) thead {
@@ -1070,6 +1364,18 @@ a {
     justify-content: flex-start;
     flex-wrap: wrap;
   }
+
+  .tablero {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .formulario--tres {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .formulario__doble {
+    grid-column: auto;
+  }
 }
 
 /* Marco de la app: móvil */
@@ -1124,9 +1430,19 @@ a {
 
   .inicio,
   .formulario,
+  .formulario--tres,
   .cartera__resumen,
-  .registro {
+  .registro,
+  .tablero {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .columna {
+    min-height: 0;
+  }
+
+  .formulario__borrar {
+    margin-left: 0;
   }
 
   .cifra {

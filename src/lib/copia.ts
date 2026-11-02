@@ -1,7 +1,10 @@
 import { aAjustesParciales } from './ajustes.ts';
 import type { Ajustes } from './ajustes.ts';
+import { aDatosCandidatura } from './candidaturas.ts';
 import { aDatosAportacion, aDatosLiquidativo, aDatosPosicion } from './cartera.ts';
 import { aDatosPlazo } from './plazos.ts';
+import { aDatosPrompt } from './prompts.ts';
+import { aDatosConvocatoria } from './vivienda.ts';
 
 export const COLECCIONES = [
   'plazos',
@@ -89,6 +92,15 @@ export function leerCopia(texto: string): Resultado {
       }
       if (clave === 'liquidativos' && !aDatosLiquidativo(campos)) {
         return fallo(`${posicion}: necesita posición, fecha y valor válidos.`);
+      }
+      if (clave === 'vivienda' && !aDatosConvocatoria(campos)) {
+        return fallo(`${posicion}: necesita municipio, promoción, tipo y estado válidos.`);
+      }
+      if (clave === 'candidaturas' && !aDatosCandidatura(campos)) {
+        return fallo(`${posicion}: necesita empresa, puesto y fase válidos.`);
+      }
+      if (clave === 'prompts' && !aDatosPrompt(campos)) {
+        return fallo(`${posicion}: necesita título y texto.`);
       }
       elementos.push(id === undefined ? campos : { id, ...campos });
     }

@@ -1,15 +1,16 @@
 import { fechaCorta } from '../lib/fechas';
-import { diasHasta, esUrgente, type Categoria, type Plazo } from '../lib/plazos';
+import { diasHasta, esUrgente, type CategoriaVista, type PlazoListado } from '../lib/plazos';
 
-const CLASE_CATEGORIA: Record<Categoria, string> = {
+const CLASE_CATEGORIA: Record<CategoriaVista, string> = {
   Viaje: 'categoria--viaje',
   Trámites: 'categoria--tramites',
   Trabajo: 'categoria--trabajo',
   Inversión: 'categoria--inversion',
   Personal: 'categoria--personal',
+  Vivienda: 'categoria--vivienda',
 };
 
-export function EtiquetaCategoria({ categoria }: { categoria: Categoria }) {
+export function EtiquetaCategoria({ categoria }: { categoria: CategoriaVista }) {
   return <span className={`categoria ${CLASE_CATEGORIA[categoria]}`}>{categoria}</span>;
 }
 
@@ -32,7 +33,7 @@ export function PlacaDias({ dias }: { dias: number }) {
   );
 }
 
-export function ResumenPlazo({ plazo, hoy }: { plazo: Plazo; hoy: string }) {
+export function ResumenPlazo({ plazo, hoy }: { plazo: PlazoListado; hoy: string }) {
   return (
     <>
       <PlacaDias dias={diasHasta(plazo.fecha, hoy)} />

@@ -34,6 +34,7 @@ Está hecho para una sola persona y sus datos: ninguna cuenta ajena, ninguna fun
 - El repositorio es público: ningún dato personal, clave ni UID en archivos versionados.
 - Acceso con usuario y contraseña, sin registro ni recuperación de contraseña. Sin sesión solo se ve el login.
 - Secciones: Inicio, Plazos, Cartera, Vivienda, Candidaturas, Prompts y Ajustes. No se añaden funciones fuera de estas.
+- Las listas que revelarían datos personales (municipios de Vivienda y áreas de Candidaturas) viven en Ajustes, en Firestore, nunca en el código.
 - Solo se admiten las dependencias autorizadas por el propietario; para cualquier otra se pregunta antes.
 - Si una API falla o falta la clave, se muestra el último dato guardado con su hora y un aviso. La página nunca se rompe.
 

@@ -4,6 +4,7 @@ import type { Ajustes as TipoAjustes } from '../lib/ajustes';
 import { leerCopia, resumirCopia, type Copia } from '../lib/copia';
 import { exportarDatos, guardarAjustes, importarDatos, useAjustes } from '../lib/datos';
 import { hoyEnMadrid, horaEnMadrid } from '../lib/fechas';
+import { listaDesdeTexto } from '../lib/prompts';
 import { useSesion } from '../lib/sesion';
 
 export function Ajustes() {
@@ -42,6 +43,8 @@ function FormularioAjustes({ uid, inicial }: { uid: string; inicial: TipoAjustes
   const [salario, setSalario] = useState(aTexto(inicial.salarioMinimo));
   const [aportacion, setAportacion] = useState(aTexto(inicial.aportacionPorFondo));
   const [dia, setDia] = useState(aTexto(inicial.diaCobro));
+  const [municipios, setMunicipios] = useState(inicial.municipios.join(', '));
+  const [areas, setAreas] = useState(inicial.areas.join(', '));
   const [guardando, setGuardando] = useState(false);
   const [resultado, setResultado] = useState<{ error: boolean; texto: string } | null>(null);
 
@@ -55,6 +58,8 @@ function FormularioAjustes({ uid, inicial }: { uid: string; inicial: TipoAjustes
         salarioMinimo: aNumero(salario),
         aportacionPorFondo: aNumero(aportacion) ?? 250,
         diaCobro: aNumero(dia),
+        municipios: listaDesdeTexto(municipios),
+        areas: listaDesdeTexto(areas),
       });
       setResultado({ error: false, texto: `Guardado a las ${horaEnMadrid()}.` });
     } catch {
@@ -111,6 +116,16 @@ function FormularioAjustes({ uid, inicial }: { uid: string; inicial: TipoAjustes
           value={dia}
           onChange={(e) => setDia(e.target.value)}
         />
+      </label>
+      <label className="campo formulario__ancho">
+        <span>Municipios de Vivienda</span>
+        <input value={municipios} onChange={(e) => setMunicipios(e.target.value)} />
+        <small className="campo__ayuda">Separados por comas. Se usan en el formulario y los filtros de Vivienda.</small>
+      </label>
+      <label className="campo formulario__ancho">
+        <span>Áreas de Candidaturas</span>
+        <input value={areas} onChange={(e) => setAreas(e.target.value)} />
+        <small className="campo__ayuda">Separadas por comas. "Otro" siempre está disponible.</small>
       </label>
       <div className="formulario__acciones formulario__ancho">
         <button className="boton boton--principal" disabled={guardando}>
