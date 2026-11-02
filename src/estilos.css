@@ -38,6 +38,17 @@
   --almagre: #8e2a2a;
   --almagre-fondo: #f8e9e7;
 
+  /* La placa de días: el almagre queda reservado para lo urgente. */
+  --placa: #1f3f8f;
+  --placa-urgente: #8e2a2a;
+
+  /* Pigmentos por categoría: cada uno significa lo mismo en toda la app. */
+  --cat-viaje: #1f3f8f;
+  --cat-tramites: #47556b;
+  --cat-trabajo: #85590a;
+  --cat-inversion: #256b5b;
+  --cat-personal: #5b3a6e;
+
   --deshabilitado-fondo: #d9dfe6;
   --deshabilitado-tinta: #566078;
 }
@@ -63,6 +74,15 @@
 
     --almagre: #f0a39a;
     --almagre-fondo: #3a1c1e;
+
+    --placa: #2c55b8;
+    --placa-urgente: #a33a35;
+
+    --cat-viaje: #9db5f2;
+    --cat-tramites: #b4bfd2;
+    --cat-trabajo: #e0b04f;
+    --cat-inversion: #62c3a8;
+    --cat-personal: #c5a6dd;
 
     --deshabilitado-fondo: #2b354a;
     --deshabilitado-tinta: #a6b0c6;
@@ -90,8 +110,16 @@ body {
 }
 
 h1,
+h2,
 p {
   margin: 0;
+}
+
+h2 {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--tinta-suave);
 }
 
 ::selection {
@@ -105,7 +133,9 @@ p {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
@@ -172,9 +202,11 @@ a {
   font-weight: 600;
 }
 
-.campo input {
+.campo input,
+.campo select,
+.campo textarea {
   width: 100%;
-  height: calc(var(--m) * 6);
+  min-height: calc(var(--m) * 6);
   padding: 0 calc(var(--m) * 1.5);
   background: var(--superficie);
   border: 1px solid var(--linea-fuerte);
@@ -184,8 +216,25 @@ a {
   transition: border-color 150ms ease-out;
 }
 
-.campo input:hover {
+.campo textarea {
+  padding-block: var(--m);
+  resize: vertical;
+}
+
+.campo input:hover,
+.campo select:hover,
+.campo textarea:hover {
   border-color: var(--tinta-suave);
+}
+
+.campo [aria-invalid='true'] {
+  border-color: var(--almagre);
+}
+
+.campo__ayuda {
+  color: var(--tinta-suave);
+  font-size: 0.8125rem;
+  font-weight: 400;
 }
 
 .boton {
@@ -207,10 +256,54 @@ a {
   background: var(--cobalto-hover);
 }
 
+.boton--secundario {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--linea-fuerte);
+}
+
+.boton--secundario:hover:not(:disabled) {
+  background: var(--linea);
+}
+
+.boton--peligro {
+  background: var(--placa-urgente);
+  color: #ffffff;
+}
+
+.boton--peligro:hover:not(:disabled) {
+  filter: brightness(0.88);
+}
+
+.boton--archivo {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.boton--archivo:focus-within {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+}
+
 .boton:disabled {
   background: var(--deshabilitado-fondo);
   color: var(--deshabilitado-tinta);
   cursor: not-allowed;
+}
+
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.enlace {
+  color: var(--acento);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .aviso-error {
@@ -308,9 +401,11 @@ a {
 
 .pagina__cabecera {
   margin-bottom: calc(var(--m) * 4);
+  /* Misma altura con y sin botón, para que el título no salte entre secciones. */
+  min-height: calc(var(--m) * 6);
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--m) calc(var(--m) * 3);
 }
@@ -321,8 +416,265 @@ a {
   font-weight: 700;
 }
 
-.pagina__vacia {
+.vacio {
   color: var(--tinta-suave);
+}
+
+.aviso-error--pagina {
+  margin-bottom: calc(var(--m) * 3);
+}
+
+.seccion__titulo {
+  margin-bottom: calc(var(--m) * 1.5);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--m) * 2);
+}
+
+.seccion__titulo .enlace {
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+
+/* Inicio */
+
+.inicio {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: calc(var(--m) * 5);
+  align-items: start;
+}
+
+.inicio__lateral {
+  display: grid;
+  gap: calc(var(--m) * 3);
+}
+
+.bloque {
+  padding-bottom: calc(var(--m) * 3);
+  display: grid;
+  gap: var(--m);
+  border-bottom: 1px solid var(--linea);
+}
+
+/* Plazos */
+
+.lista-plazos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plazo {
+  padding: calc(var(--m) * 1.5) 0;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: var(--m) calc(var(--m) * 2);
+  align-items: center;
+  border-top: 1px solid var(--linea);
+}
+
+.plazo--resumen {
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+
+.plazo--archivado {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.plazo__cuerpo {
+  min-width: 0;
+}
+
+.plazo__titulo {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.plazo__meta {
+  margin-top: calc(var(--m) / 2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 calc(var(--m) * 1.5);
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+}
+
+.plazo__acciones,
+.confirmar,
+.formulario__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--m);
+}
+
+.plazo__acciones .boton {
+  height: calc(var(--m) * 5);
+  padding: 0 calc(var(--m) * 2);
+  font-size: 0.875rem;
+}
+
+.plazo__detalle {
+  grid-column: 2 / -1;
+  display: grid;
+  justify-items: start;
+  gap: calc(var(--m) / 2);
+  font-size: 0.875rem;
+}
+
+.plazo--archivado .plazo__detalle {
+  grid-column: 1 / -1;
+}
+
+.plazo__nota {
+  color: var(--tinta-suave);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.placa {
+  width: 72px;
+  height: 64px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  background: var(--placa);
+  color: #ffffff;
+  border-radius: 6px;
+  /* Filete blanco dentro del azulejo, como en un número de portal. */
+  box-shadow:
+    inset 0 0 0 3px var(--placa),
+    inset 0 0 0 4px rgb(255 255 255 / 0.85);
+}
+
+.placa--urgente {
+  background: var(--placa-urgente);
+  box-shadow:
+    inset 0 0 0 3px var(--placa-urgente),
+    inset 0 0 0 4px rgb(255 255 255 / 0.85);
+}
+
+.placa__numero {
+  font: 700 2rem/1 'Ibarra Real Nova', Georgia, serif;
+  font-feature-settings: 'lnum';
+}
+
+.placa--larga .placa__numero {
+  font-size: 1.5rem;
+}
+
+.placa__hoy {
+  font: 700 1.5rem/1 'Ibarra Real Nova', Georgia, serif;
+}
+
+.placa__unidad {
+  margin-top: 2px;
+  font-size: 0.625rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.categoria {
+  font-weight: 600;
+}
+
+.categoria--viaje {
+  color: var(--cat-viaje);
+}
+
+.categoria--tramites {
+  color: var(--cat-tramites);
+}
+
+.categoria--trabajo {
+  color: var(--cat-trabajo);
+}
+
+.categoria--inversion {
+  color: var(--cat-inversion);
+}
+
+.categoria--personal {
+  color: var(--cat-personal);
+}
+
+.plazo-formulario {
+  padding: calc(var(--m) * 3);
+  border-top: 1px solid var(--linea);
+  background: var(--superficie);
+}
+
+.plazo-formulario--alta {
+  margin-bottom: calc(var(--m) * 3);
+  border-top: 0;
+  border-radius: 8px;
+}
+
+.formulario {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: calc(var(--m) * 2.5) calc(var(--m) * 3);
+}
+
+.formulario__ancho {
+  grid-column: 1 / -1;
+}
+
+.archivados {
+  margin-top: calc(var(--m) * 4);
+}
+
+.archivados summary {
+  width: fit-content;
+  padding-block: var(--m);
+  color: var(--tinta-suave);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.esqueleto {
+  display: grid;
+  gap: var(--m);
+}
+
+.esqueleto__fila {
+  height: calc(var(--m) * 8);
+  background: var(--linea);
+  border-radius: 6px;
+  opacity: 0.6;
+}
+
+/* Ajustes */
+
+.ajustes {
+  max-width: 720px;
+  display: grid;
+  gap: calc(var(--m) * 6);
+}
+
+.ajustes h2 {
+  margin-bottom: calc(var(--m) * 2);
+}
+
+.ajustes__explicacion {
+  margin-bottom: calc(var(--m) * 2);
+}
+
+.ajustes__mensaje,
+.importar {
+  margin-top: calc(var(--m) * 2);
+}
+
+.importar {
+  padding: calc(var(--m) * 2.5);
+  display: grid;
+  gap: calc(var(--m) * 2);
+  background: var(--superficie);
+  border-radius: 8px;
 }
 
 /* Marco de la app: móvil */
@@ -373,6 +725,43 @@ a {
 
   .pagina {
     padding: calc(var(--m) * 3) calc(var(--m) * 2);
+  }
+
+  .inicio,
+  .formulario {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .plazo {
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .plazo--archivado {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Nota y botones se alinean con el texto, bajo la placa no. */
+  .plazo__acciones,
+  .plazo__detalle {
+    grid-column: 2;
+  }
+
+  .plazo__detalle {
+    order: 1;
+  }
+
+  .plazo__acciones {
+    order: 2;
+  }
+
+  .plazo--archivado .plazo__acciones,
+  .plazo--archivado .plazo__detalle {
+    grid-column: 1;
+  }
+
+  .plazo__acciones .boton {
+    height: calc(var(--m) * 5.5);
   }
 
   .barra {
