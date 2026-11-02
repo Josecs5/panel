@@ -4,6 +4,7 @@ import { LimiteDeError } from './components/LimiteDeError';
 import { Marco, SECCIONES } from './components/Marco';
 import { useSesion } from './lib/sesion';
 import { Ajustes } from './pages/Ajustes';
+import { Cartera } from './pages/Cartera';
 import { Inicio } from './pages/Inicio';
 import { Login } from './pages/Login';
 import { Plazos } from './pages/Plazos';
@@ -12,6 +13,7 @@ import { SeccionPendiente } from './pages/SeccionPendiente';
 const PAGINAS: Record<string, ReactElement> = {
   '/': <Inicio />,
   '/plazos': <Plazos />,
+  '/cartera': <Cartera />,
   '/ajustes': <Ajustes />,
 };
 

@@ -4,6 +4,7 @@ import { aAjustes } from './ajustes.ts';
 import { leerCopia, resumirCopia } from './copia.ts';
 
 const PLAZO = { id: 'a', titulo: 'A', fecha: '2026-11-07', categoria: 'Viaje' };
+const POSICION = { nombre: 'X', tipo: 'accion', identificador: 'X', divisa: 'USD', cantidad: null };
 
 function leerBien(valor: unknown) {
   const resultado = leerCopia(JSON.stringify(valor));
@@ -18,9 +19,21 @@ function error(valor: unknown) {
 }
 
 test('acepta una copia válida y separa el id de los campos', () => {
-  const copia = leerBien({ version: 1, plazos: [PLAZO], posiciones: [{ nombre: 'X', cantidad: null }] });
+  const copia = leerBien({ version: 1, plazos: [PLAZO], posiciones: [POSICION] });
   assert.deepEqual(copia.plazos, [PLAZO]);
-  assert.deepEqual(copia.posiciones, [{ nombre: 'X', cantidad: null }]);
+  assert.deepEqual(copia.posiciones, [POSICION]);
+});
+
+test('valida posiciones, aportaciones y valores liquidativos', () => {
+  assert.match(error({ version: 1, posiciones: [{ nombre: 'X' }] }), /posiciones, elemento 1/);
+  assert.match(
+    error({ version: 1, aportaciones: [{ posicionId: 'a', fecha: '2026-11-02', importe: 0, valorLiquidativo: 10 }] }),
+    /aportaciones, elemento 1/,
+  );
+  assert.match(
+    error({ version: 1, liquidativos: [{ posicionId: 'a', fecha: 'ayer', valor: 10 }] }),
+    /liquidativos, elemento 1/,
+  );
 });
 
 test('rechaza lo que no es una copia', () => {
@@ -65,7 +78,7 @@ test('resume el contenido en español', () => {
   assert.equal(resumirCopia(leerBien({ version: 1 })), 'nada');
   assert.equal(resumirCopia(leerBien({ version: 1, plazos: [PLAZO] })), '1 plazos');
   assert.equal(
-    resumirCopia(leerBien({ version: 1, plazos: [PLAZO], posiciones: [{}], ajustes: { diaCobro: 1 } })),
+    resumirCopia(leerBien({ version: 1, plazos: [PLAZO], posiciones: [POSICION], ajustes: { diaCobro: 1 } })),
     '1 plazos, 1 posiciones y ajustes',
   );
 });

@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect, type ReactNode } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useSesion } from '../lib/sesion';
 import { Icono, type NombreIcono } from './Icono';
 
@@ -23,6 +23,12 @@ const claseDeEnlace =
 
 export function Marco({ children }: { children: ReactNode }) {
   const { cerrarSesion } = useSesion();
+  const { pathname } = useLocation();
+
+  // Cada sección empieza arriba, aunque la anterior se hubiera quedado a media página.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <div className="marco">

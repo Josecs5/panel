@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import { AJUSTES_INICIALES, aAjustes, aAjustesParciales, type Ajustes } from './ajustes.ts';
 import { COLECCIONES, type Coleccion, type Copia, type Elemento } from './copia.ts';
+import type { CacheMercado } from './cotizaciones.ts';
 import { db } from './firebase.ts';
 
 // Tras el login siempre hay configuración: si no, no se llega a estas pantallas.
@@ -88,6 +89,36 @@ export const borrarElemento = (uid: string, nombre: Coleccion, id: string) =>
 
 export const guardarAjustes = (uid: string, ajustes: Partial<Ajustes>) =>
   setDoc(rutaAjustes(uid), ajustes, { merge: true });
+
+/** Borra una posición junto con sus aportaciones y valores liquidativos. */
+export async function borrarPosicion(
+  uid: string,
+  posicionId: string,
+  aportaciones: string[],
+  liquidativos: string[],
+): Promise<void> {
+  const operaciones = [
+    doc(rutaColeccion(uid, 'posiciones'), posicionId),
+    ...aportaciones.map((id) => doc(rutaColeccion(uid, 'aportaciones'), id)),
+    ...liquidativos.map((id) => doc(rutaColeccion(uid, 'liquidativos'), id)),
+  ];
+  for (let i = 0; i < operaciones.length; i += TAMANO_LOTE) {
+    const lote = writeBatch(base());
+    operaciones.slice(i, i + TAMANO_LOTE).forEach((ref) => lote.delete(ref));
+    await lote.commit();
+  }
+}
+
+// Precios y cambio: no forman parte de la copia de seguridad porque se pueden volver a pedir.
+const rutaCacheMercado = (uid: string) => doc(base(), 'users', uid, 'cache', 'mercado');
+
+export async function leerCacheMercado(uid: string): Promise<CacheMercado> {
+  const foto = await getDoc(rutaCacheMercado(uid));
+  return { cotizaciones: {}, ...(foto.data() as Partial<CacheMercado> | undefined) };
+}
+
+export const guardarCacheMercado = (uid: string, cambios: Partial<CacheMercado>) =>
+  setDoc(rutaCacheMercado(uid), cambios, { merge: true });
 
 /** Reúne todos los datos del usuario en una copia de seguridad. */
 export async function exportarDatos(uid: string): Promise<Copia> {

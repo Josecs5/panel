@@ -1,5 +1,6 @@
 import { aAjustesParciales } from './ajustes.ts';
 import type { Ajustes } from './ajustes.ts';
+import { aDatosAportacion, aDatosLiquidativo, aDatosPosicion } from './cartera.ts';
 import { aDatosPlazo } from './plazos.ts';
 
 export const COLECCIONES = [
@@ -79,6 +80,15 @@ export function leerCopia(texto: string): Resultado {
       }
       if (clave === 'plazos' && !aDatosPlazo(campos)) {
         return fallo(`${posicion}: necesita título, fecha AAAA-MM-DD y una categoría válida.`);
+      }
+      if (clave === 'posiciones' && !aDatosPosicion(campos)) {
+        return fallo(`${posicion}: necesita nombre, tipo, identificador y divisa válidos.`);
+      }
+      if (clave === 'aportaciones' && !aDatosAportacion(campos)) {
+        return fallo(`${posicion}: necesita posición, fecha, importe y valor liquidativo válidos.`);
+      }
+      if (clave === 'liquidativos' && !aDatosLiquidativo(campos)) {
+        return fallo(`${posicion}: necesita posición, fecha y valor válidos.`);
       }
       elementos.push(id === undefined ? campos : { id, ...campos });
     }

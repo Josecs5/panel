@@ -19,6 +19,7 @@ const csp = [
     'https://firestore.googleapis.com',
     'https://finnhub.io',
     'https://api.frankfurter.dev',
+    'https://open.er-api.com',
   ].join(' '),
   "object-src 'none'",
   "base-uri 'self'",
