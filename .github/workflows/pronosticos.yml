@@ -6,11 +6,12 @@ on:
       modo:
         description: Qué ejecutar
         type: choice
-        options: [backtest]
-        default: backtest
+        options: [diario, backtest]
+        default: diario
 
+# Escribe pipeline/estado.json; con GITHUB_TOKEN ese commit no vuelve a publicar la web.
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: pronosticos
@@ -47,5 +48,20 @@ jobs:
         working-directory: pipeline
         env:
           FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
-          MODO: ${{ inputs.modo }}
-        run: python -m pronosticos.main "$MODO" --datos datos
+          ODDSPAPI_KEY: ${{ secrets.ODDSPAPI_KEY }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PANEL_UID: ${{ secrets.PANEL_UID }}
+          MODO: ${{ inputs.modo || 'diario' }}
+        run: python -m pronosticos.main "$MODO" --datos datos --estado estado.json
+
+      # GitHub desactiva lo programado tras 60 días sin actividad en un repo público.
+      - name: Guardar el estado
+        if: ${{ (inputs.modo || 'diario') == 'diario' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pipeline/estado.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Pronósticos: estado de la ejecución diaria"
+          git pull --rebase origin main
+          git push origin main

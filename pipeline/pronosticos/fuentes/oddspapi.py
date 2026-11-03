@@ -51,6 +51,7 @@ class ClienteOddsPapi:
     def __init__(self, clave: str, contador: ContadorPeticiones, sesion=None, dormir=time.sleep):
         self._clave = clave
         self._contador = contador
+        self.contador = contador
         self._sesion = sesion or requests.Session()
         self._dormir = dormir
         self._ultima: dict[str, float] = {}
@@ -84,7 +85,7 @@ class ClienteOddsPapi:
             bookmaker=casa,
             tournamentIds=",".join(str(t) for t in torneos),
             oddsFormat="decimal",
-            verbosity=1,
+            verbosity=3,  # con menos detalle no vienen los nombres de los equipos
         )
 
     def mercados(self, deporte: int = 10) -> list[dict]:
@@ -128,6 +129,8 @@ def lineas_de_partido(partido: dict, casa: str, catalogo: dict[int, dict]) -> li
                         "tipo": ficha["marketType"],
                         "linea": ficha.get("handicap"),
                         "seleccion": nombres.get(str(id_resultado), str(id_resultado)),
+                        "id_resultado": str(id_resultado),
+                        "id_jugador": str(jugador),
                         "jugador": oferta.get("playerName") if jugador != "0" else None,
                         "cuota": float(oferta["price"]),
                     }

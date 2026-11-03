@@ -1,5 +1,7 @@
 """Liquidación de selecciones y apuestas con el resultado del partido."""
 
+import re
+
 GANADA = "ganada"
 PERDIDA = "perdida"
 SIN_LIQUIDAR = "sin_liquidar"
@@ -22,6 +24,30 @@ def liquidar_seleccion(mercado: str, gl: int | None, gv: int | None) -> str:
         supera = total > linea
         return GANADA if supera == (mercado[0] == "o") else PERDIDA
     raise ValueError(f"Mercado desconocido: {mercado}")
+
+
+def liquidar_estadistica(clave: str, estadisticas: dict | None) -> str:
+    """Claves como corners_o95 o tarjetas_l_u25; `estadisticas` trae los conteos del partido.
+
+    `estadisticas` usa los campos corners_l, corners_v, tarjetas_l, tarjetas_v...
+    """
+    coincidencia = re.fullmatch(r"(corners|tarjetas|faltas|tiros_puerta)_(l_|v_)?([ou])(\d+)", clave)
+    if not coincidencia:
+        raise ValueError(f"Mercado de estadísticas desconocido: {clave}")
+    nombre, equipo, lado, digitos = coincidencia.groups()
+    if not estadisticas:
+        return SIN_LIQUIDAR
+    local, visitante = estadisticas.get(f"{nombre}_l"), estadisticas.get(f"{nombre}_v")
+    if equipo == "l_":
+        valor = local
+    elif equipo == "v_":
+        valor = visitante
+    else:
+        valor = None if local is None or visitante is None else local + visitante
+    if valor is None or valor != valor:
+        return SIN_LIQUIDAR
+    supera = valor > int(digitos) / 10.0
+    return GANADA if supera == (lado == "o") else PERDIDA
 
 
 def liquidar_apuesta(resultados: list[str]) -> str:

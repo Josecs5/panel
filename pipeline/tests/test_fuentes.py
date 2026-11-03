@@ -161,7 +161,17 @@ def test_lineas_de_partido_solo_devuelve_cuotas_activas():
     }
     lineas = lineas_de_partido(partido, "bet365.es", catalogo)
     assert lineas == [
-        {"mercado": 101, "nombre": "Full Time Result", "tipo": "1x2", "linea": 0.0, "seleccion": "1", "jugador": None, "cuota": 1.66}
+        {
+            "mercado": 101,
+            "nombre": "Full Time Result",
+            "tipo": "1x2",
+            "linea": 0.0,
+            "seleccion": "1",
+            "id_resultado": "101",
+            "id_jugador": "0",
+            "jugador": None,
+            "cuota": 1.66,
+        }
     ]
     assert lineas_de_partido(partido, "bwin.es", catalogo) == []
 

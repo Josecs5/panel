@@ -1,4 +1,4 @@
-"""Punto de entrada del pipeline. Por ahora, solo el backtest."""
+"""Punto de entrada del pipeline: ejecución diaria o backtest."""
 
 import argparse
 import json
@@ -9,10 +9,12 @@ from pathlib import Path
 import pandas as pd
 import requests
 
-from . import backtest, informe
+from . import backtest, diario, informe
+from .almacen.firestore import AlmacenFirestore
 from .config import COMPETICIONES_ELO, TEMPORADA_AJUSTE, TEMPORADA_VALIDACION, TEMPORADAS_CHAMPIONS, TEMPORADAS_CSV
 from .fuentes.csv_fd import leer_todos
 from .fuentes.football_data_org import ClienteFootballData, a_tabla
+from .fuentes.oddspapi import ClienteOddsPapi
 
 
 def _tablas_champions(token: str, cache: Path) -> tuple[pd.DataFrame, list[str]]:
@@ -59,19 +61,62 @@ def ejecutar_backtest(carpeta_datos: Path, token: str | None) -> tuple[dict, str
     return resultado, informe.a_markdown(resultado, recuento)
 
 
+def ejecutar_modo_diario(carpeta_datos: Path, estado_json: Path) -> dict:
+    """Las claves llegan por variables de entorno desde GitHub Secrets."""
+    for nombre in ("FOOTBALL_DATA_TOKEN", "FIREBASE_SERVICE_ACCOUNT", "PANEL_UID"):
+        if not os.environ.get(nombre):
+            raise RuntimeError(f"Falta el secret {nombre}")
+    almacen = AlmacenFirestore(os.environ["FIREBASE_SERVICE_ACCOUNT"], os.environ["PANEL_UID"])
+    fd = ClienteFootballData(os.environ["FOOTBALL_DATA_TOKEN"], cache=carpeta_datos / "fdorg")
+
+    odds = catalogo = None
+    clave = os.environ.get("ODDSPAPI_KEY")
+    if clave:
+        odds = ClienteOddsPapi(clave, diario.contador_en_almacen(almacen))
+        catalogo = diario.cargar_catalogo(odds, carpeta_datos / "oddspapi_mercados.json")
+
+    ahora = pd.Timestamp.now(tz="UTC")
+    actual = diario.temporada_actual(ahora)
+    temporadas = tuple(diario.codigo_csv(t) for t in range(actual - 4, actual + 1))
+    try:
+        csv, _ = leer_todos(carpeta_datos / "csv", temporadas)
+    except FileNotFoundError:
+        csv = None
+
+    estado = diario.ejecutar_diario(almacen, fd, odds, csv, ahora, catalogo=catalogo)
+    # Solo fecha, versión y número de partidos: este archivo es público.
+    estado_json.write_text(json.dumps(estado, indent=2) + "\n", encoding="utf-8")
+    return estado
+
+
 def main(argumentos: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Pipeline de Pronósticos")
-    parser.add_argument("modo", choices=["backtest"])
+    parser.add_argument("modo", choices=["backtest", "diario"])
     parser.add_argument("--datos", type=Path, default=Path("pipeline/datos"))
+    parser.add_argument("--estado", type=Path, default=Path("pipeline/estado.json"))
     opciones = parser.parse_args(argumentos)
+    sys.stdout.reconfigure(encoding="utf-8")
+
+    if opciones.modo == "diario":
+        estado = ejecutar_modo_diario(opciones.datos, opciones.estado)
+        print(f"Ejecución terminada: versión {estado['version']}, {estado['partidos']} partidos")
+        return 0
 
     resultado, texto = ejecutar_backtest(opciones.datos, os.environ.get("FOOTBALL_DATA_TOKEN"))
 
     salida = opciones.datos / "backtest"
     salida.mkdir(parents=True, exist_ok=True)
     (salida / "resultado.json").write_text(json.dumps(resultado, default=str, indent=1), encoding="utf-8")
+    cuenta, uid = os.environ.get("FIREBASE_SERVICE_ACCOUNT"), os.environ.get("PANEL_UID")
+    if cuenta and uid:
+        ahora = pd.Timestamp.now(tz="UTC")
+        AlmacenFirestore(cuenta, uid).guardar(
+            "pronBacktests",
+            ahora.strftime("%Y-%m-%d"),
+            {"generado": ahora.isoformat(), **json.loads(json.dumps(resultado, default=str))},
+            unir=False,
+        )
 
-    sys.stdout.reconfigure(encoding="utf-8")
     print(texto)
     resumen = os.environ.get("GITHUB_STEP_SUMMARY")
     if resumen:
