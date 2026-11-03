@@ -8,6 +8,7 @@ from pronosticos import diario
 from pronosticos.almacen.firestore import AlmacenMemoria
 from pronosticos.auditoria import auditar as au
 from pronosticos.fuentes.oddspapi import ContadorPeticiones, CuotaAgotada
+from pronosticos.main import comprobar_uid
 
 EQUIPOS = {100 + i: f"Club {i} FC" for i in range(8)}
 AHORA = pd.Timestamp("2026-11-09T05:00:00Z")  # lunes, 6:00 en Madrid
@@ -428,3 +429,18 @@ def test_los_ajustes_invalidos_se_ignoran_y_pinnacle_no_es_casa_de_apuesta():
     assert ajustes.umbrales.prob_minima == 0.3
     assert len(ajustes.derbis) == 1
     assert not hasattr(ajustes, "tope")
+
+
+def test_un_uid_sin_datos_del_panel_para_la_ejecucion_sin_escribir():
+    vacio = AlmacenMemoria()
+    with pytest.raises(RuntimeError, match="no se ha escrito nada"):
+        comprobar_uid(vacio)
+    assert vacio.datos == {}
+
+    con_ajustes = AlmacenMemoria()
+    con_ajustes.guardar("ajustes", "general", {"diaCobro": 1})
+    comprobar_uid(con_ajustes)
+
+    con_plazos = AlmacenMemoria()
+    con_plazos.guardar("plazos", "a", {"titulo": "x"})
+    comprobar_uid(con_plazos)

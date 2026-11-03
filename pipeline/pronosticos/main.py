@@ -61,12 +61,24 @@ def ejecutar_backtest(carpeta_datos: Path, token: str | None) -> tuple[dict, str
     return resultado, informe.a_markdown(resultado, recuento)
 
 
+def comprobar_uid(almacen) -> None:
+    """Con la cuenta de servicio se podría escribir en cualquier usuario, sin pasar por las reglas.
+
+    Si PANEL_UID estuviera mal, los datos irían a un usuario que la web nunca lee. Antes de
+    escribir nada, se exige que ese usuario tenga ya datos del panel.
+    """
+    if almacen.leer("ajustes", "general") or any(almacen.listar(c) for c in ("plazos", "posiciones", "prompts")):
+        return
+    raise RuntimeError("PANEL_UID no corresponde a un usuario con datos del panel: no se ha escrito nada")
+
+
 def ejecutar_modo_diario(carpeta_datos: Path, estado_json: Path) -> dict:
     """Las claves llegan por variables de entorno desde GitHub Secrets."""
     for nombre in ("FOOTBALL_DATA_TOKEN", "FIREBASE_SERVICE_ACCOUNT", "PANEL_UID"):
         if not os.environ.get(nombre):
             raise RuntimeError(f"Falta el secret {nombre}")
     almacen = AlmacenFirestore(os.environ["FIREBASE_SERVICE_ACCOUNT"], os.environ["PANEL_UID"])
+    comprobar_uid(almacen)
     fd = ClienteFootballData(os.environ["FOOTBALL_DATA_TOKEN"], cache=carpeta_datos / "fdorg")
 
     odds = catalogo = None
