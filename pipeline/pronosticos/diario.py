@@ -261,14 +261,8 @@ def elegir_destacados(proximos: list[dict], elo: Elo, ajustes: Ajustes) -> list[
 
 
 def jugadores_importados(importaciones: dict[str, dict]) -> tuple[list[dict], str | None]:
-    """La importación más reciente de cada jugador manda."""
-    por_jugador: dict[tuple[str, str], dict] = {}
-    ultima = None
-    for documento in sorted(importaciones.values(), key=lambda d: d.get("fecha", "")):
-        ultima = documento.get("fecha", ultima)
-        for fila in documento.get("filas", []):
-            por_jugador[(fila.get("jugador", ""), fila.get("equipo", ""))] = fila
-    return jug.tasas(list(por_jugador.values())), ultima
+    fichas, ultima = jug.combinar_importaciones(list(importaciones.values()))
+    return jug.tasas(fichas), ultima
 
 
 def pedir_cuotas(cliente, catalogo: dict, casas: list[str], avisos: list[str]) -> tuple[dict[str, list[dict]], int]:

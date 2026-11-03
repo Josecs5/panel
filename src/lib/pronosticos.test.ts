@@ -4,6 +4,7 @@ import { leerCopia } from './copia.ts';
 import {
   aDatosApuesta,
   aDatosEstadisticasCL,
+  aDatosImportacion,
   aJornada,
   aLiquidacion,
   aPartido,
@@ -71,11 +72,26 @@ test('sin cabecera se nombran las columnas y hay que asignarlas a mano', () => {
   assert.equal(tabla.conCabecera, false);
   assert.deepEqual(tabla.cabecera, ['Columna 1', 'Columna 2']);
   assert.equal(aFilas(tabla, {}).error, 'Indica qué columna es la del jugador.');
-  assert.equal(aFilas(tabla, { jugador: 0 }).error, 'Indica qué columna son los minutos.');
+  assert.equal(aFilas(tabla, { jugador: 0 }).error, 'Indica al menos una columna de datos.');
   assert.equal(aFilas(tabla, { jugador: 0, minutos: 1 }).filas.length, 2);
 });
 
-test('las filas sin jugador, sin minutos o con datos inválidos se descartan y se cuentan', () => {
+test('una tabla parcial solo lleva sus columnas, para no pisar las de otras importaciones', () => {
+  const tabla = leerTabla('Player,Squad,SoT\nAna,Equipo A,7\n');
+  const { filas, error } = aFilas(tabla, proponerAsignacion(tabla.cabecera));
+  assert.equal(error, null);
+  assert.deepEqual(filas, [{ jugador: 'Ana', equipo: 'Equipo A', tiros_puerta: 7 }]);
+});
+
+test('una importación guardada conserva solo los datos que traía', () => {
+  const datos = aDatosImportacion({
+    fecha: '2026-11-03',
+    filas: [{ jugador: 'Ana', tiros_puerta: 7 }, { jugador: 'Sin datos' }, { minutos: 90 }],
+  });
+  assert.deepEqual(datos!.filas, [{ jugador: 'Ana', equipo: '', tiros_puerta: 7 }]);
+});
+
+test('las filas sin jugador, con minutos a cero o con datos inválidos se descartan y se cuentan', () => {
   const tabla = leerTabla('Player,Min,Fls\nAna,90,3\n,90,1\nEva,0,1\nLuz,90,x\n');
   const { filas, descartadas } = aFilas(tabla, proponerAsignacion(tabla.cabecera));
   assert.deepEqual(filas.map((f) => f.jugador), ['Ana']);

@@ -56,9 +56,11 @@ El tope de 5 € por jornada es una constante en `pipeline/pronosticos/config.py
 Pronósticos > Ajustes > Importar datos de jugadores:
 
 1. Copia una tabla de una web y pégala, o sube un CSV.
-2. Pulsa **Ver vista previa** y comprueba qué dato hay en cada columna. Pueden venir en cualquier orden. Jugador y minutos son obligatorios.
+2. Pulsa **Ver vista previa** y comprueba qué dato hay en cada columna. Pueden venir en cualquier orden. Solo son obligatorios el jugador y una columna de datos.
 3. Si un nombre se parece a un jugador conocido, decide si es el mismo.
 4. Escribe la fuente y guarda.
+
+Puedes repartir los datos en varias tablas, como una de faltas y otra de tiros: se combinan por jugador y equipo. Si dos tablas traen el mismo dato, manda la más reciente; lo que una tabla no trae no borra nada. Un jugador se usa cuando alguna de tus tablas trae sus minutos, y cada dato que falte se queda sin estimar, sin contar como 0. Al borrar una importación, desaparece solo lo que aportaba. La columna «90s» no son minutos: si la tabla solo trae esa, multiplícala por 90 antes de importar.
 
 Los datos se guardan solo en Firestore, nunca en el repo. Inicio avisa si tienen más de 14 días.
 

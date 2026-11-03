@@ -1,7 +1,7 @@
 // Lee tablas de jugadores pegadas de una web o subidas en CSV. Las columnas pueden venir
 // en cualquier orden; aquí solo se propone la asignación, y la confirma el usuario.
 
-import type { FilaJugador } from './pronosticos.ts';
+import { CAMPOS_NUMERICOS, type FilaJugador } from './pronosticos.ts';
 
 export const CAMPOS = [
   'jugador',
@@ -130,7 +130,9 @@ export type ResultadoFilas = { filas: FilaJugador[]; descartadas: number; error:
 
 export function aFilas(tabla: TablaCruda, asignacion: Asignacion): ResultadoFilas {
   if (asignacion.jugador === undefined) return { filas: [], descartadas: 0, error: 'Indica qué columna es la del jugador.' };
-  if (asignacion.minutos === undefined) return { filas: [], descartadas: 0, error: 'Indica qué columna son los minutos.' };
+  if (CAMPOS_NUMERICOS.every((campo) => asignacion[campo] === undefined)) {
+    return { filas: [], descartadas: 0, error: 'Indica al menos una columna de datos.' };
+  }
 
   const valor = (fila: string[], campo: Campo) =>
     asignacion[campo] === undefined ? undefined : fila[asignacion[campo]!];
@@ -138,25 +140,19 @@ export function aFilas(tabla: TablaCruda, asignacion: Asignacion): ResultadoFila
   let descartadas = 0;
   for (const fila of tabla.filas) {
     const jugador = (valor(fila, 'jugador') ?? '').trim();
-    const minutos = leerNumero(valor(fila, 'minutos'));
-    const numeros = (['faltas_cometidas', 'faltas_recibidas', 'amarillas', 'tiros_puerta'] as const).map((c) =>
-      leerNumero(valor(fila, c)),
-    );
-    if (!jugador || !minutos || numeros.some((n) => n === null)) {
-      descartadas += 1;
-      continue;
+    const nueva: FilaJugador = { jugador, equipo: (valor(fila, 'equipo') ?? '').trim() };
+    let valida = jugador !== '';
+    // Solo las columnas asignadas: las demás se quedan como están en otras importaciones.
+    for (const campo of CAMPOS_NUMERICOS) {
+      if (asignacion[campo] === undefined) continue;
+      const numero = leerNumero(valor(fila, campo));
+      if (numero === null || (campo === 'minutos' && numero === 0)) valida = false;
+      else nueva[campo] = numero;
     }
-    filas.push({
-      jugador,
-      equipo: (valor(fila, 'equipo') ?? '').trim(),
-      minutos,
-      faltas_cometidas: numeros[0]!,
-      faltas_recibidas: numeros[1]!,
-      amarillas: numeros[2]!,
-      tiros_puerta: numeros[3]!,
-    });
+    if (valida) filas.push(nueva);
+    else descartadas += 1;
   }
-  return { filas, descartadas, error: filas.length ? null : 'Ninguna fila tiene jugador y minutos válidos.' };
+  return { filas, descartadas, error: filas.length ? null : 'Ninguna fila tiene jugador y datos válidos.' };
 }
 
 const clavePersona = (nombre: string) => {

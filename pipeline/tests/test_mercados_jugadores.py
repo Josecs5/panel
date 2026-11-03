@@ -195,3 +195,78 @@ def test_top_marca_el_origen_y_prefiere_el_mercado():
 def test_nombres_oficiales_y_comerciales_del_mismo_club():
     assert parecido("PAE AEK", "AEK Athens") == 1.0
     assert parecido("Real Betis Balompié", "Real Betis Seville") >= 0.5
+
+
+def _importacion(fecha, *filas):
+    return {"fecha": fecha, "fuente": "web", "filas": list(filas)}
+
+
+def test_las_importaciones_se_combinan_sin_pisar_lo_que_no_traen():
+    faltas = _importacion(
+        "2026-11-01",
+        {"jugador": "Ana Ruiz", "equipo": "Sevilla FC", "minutos": 900, "faltas_cometidas": 20, "faltas_recibidas": 9},
+    )
+    tiros = _importacion("2026-11-02", {"jugador": "Ana Ruiz", "equipo": "Sevilla FC", "tiros_puerta": 7})
+    fichas, ultima = jug.combinar_importaciones([tiros, faltas])
+    assert ultima == "2026-11-02"
+    assert fichas == [
+        {
+            "jugador": "Ana Ruiz",
+            "equipo": "Sevilla FC",
+            "minutos": 900,
+            "faltas_cometidas": 20,
+            "faltas_recibidas": 9,
+            "tiros_puerta": 7,
+        }
+    ]
+
+
+def test_si_dos_tablas_traen_el_mismo_dato_manda_la_mas_reciente():
+    vieja = _importacion("2026-11-01", {"jugador": "Ana Ruiz", "equipo": "Sevilla", "minutos": 450, "amarillas": 1})
+    nueva = _importacion("2026-11-08", {"jugador": "Ana Ruiz", "equipo": "Sevilla", "minutos": 540, "amarillas": 2})
+    fichas, _ = jug.combinar_importaciones([nueva, vieja])
+    assert fichas[0]["minutos"] == 540 and fichas[0]["amarillas"] == 2
+
+
+def test_combina_aunque_cambie_el_formato_del_nombre_o_del_equipo():
+    a = _importacion("2026-11-01", {"jugador": "Ana Ruiz", "equipo": "Sevilla FC", "minutos": 900})
+    b = _importacion("2026-11-02", {"jugador": "Ruiz, Ana", "equipo": "Sevilla", "amarillas": 3})
+    c = _importacion("2026-11-03", {"jugador": "Ána Ruíz", "tiros_puerta": 4})
+    fichas, _ = jug.combinar_importaciones([a, b, c])
+    assert len(fichas) == 1
+    assert fichas[0]["minutos"] == 900 and fichas[0]["amarillas"] == 3 and fichas[0]["tiros_puerta"] == 4
+
+
+def test_dos_homonimos_de_equipos_distintos_no_se_mezclan():
+    a = _importacion("2026-11-01", {"jugador": "Ana Ruiz", "equipo": "Arsenal FC", "minutos": 900})
+    b = _importacion("2026-11-02", {"jugador": "Ana Ruiz", "equipo": "Everton FC", "minutos": 100})
+    fichas, _ = jug.combinar_importaciones([a, b])
+    assert sorted(f["minutos"] for f in fichas) == [100, 900]
+
+
+def test_borrar_una_importacion_quita_solo_su_aportacion():
+    faltas = _importacion("2026-11-01", {"jugador": "Ana", "equipo": "A", "minutos": 900, "faltas_cometidas": 20})
+    tiros = _importacion("2026-11-02", {"jugador": "Ana", "equipo": "A", "tiros_puerta": 7})
+    assert "tiros_puerta" in jug.combinar_importaciones([faltas, tiros])[0][0]
+    assert "tiros_puerta" not in jug.combinar_importaciones([faltas])[0][0]
+
+
+def test_un_dato_que_falta_no_cuenta_como_cero():
+    filas = [
+        {"jugador": "Ana", "equipo": "A", "minutos": 900, "faltas_cometidas": 30},
+        {"jugador": "Eva", "equipo": "A", "minutos": 900, "faltas_cometidas": 10, "tiros_puerta": 18},
+    ]
+    tabla = {t["jugador"]: t for t in jug.tasas(filas)}
+    assert "tiros_puerta" not in tabla["Ana"]
+    # La media de tiros sale solo de quien tiene el dato: 18 en 900 minutos
+    assert tabla["Eva"]["tiros_puerta"] == pytest.approx(18 / 900 * 90)
+
+    top = jug.top_por_categoria(jug.tasas(filas), [], {}, {})
+    assert [j.jugador for j in top["tiros_puerta"]] == ["Eva"]
+    assert {j.jugador for j in top["faltas"]} == {"Ana", "Eva"}
+    assert top["recibe_falta"] == []
+
+
+def test_un_jugador_sin_minutos_en_ninguna_tabla_no_se_usa_todavia():
+    fichas, _ = jug.combinar_importaciones([_importacion("2026-11-01", {"jugador": "Ana", "equipo": "A", "amarillas": 3})])
+    assert jug.tasas(fichas) == []

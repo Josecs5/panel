@@ -173,15 +173,13 @@ export type DatosApuesta = {
 };
 export type ApuestaReal = DatosApuesta & { id: string };
 
+export const CAMPOS_NUMERICOS = ['minutos', 'faltas_cometidas', 'faltas_recibidas', 'amarillas', 'tiros_puerta'] as const;
+
+/** Solo lleva los datos que traía la tabla: el proceso diario combina las importaciones. */
 export type FilaJugador = {
   jugador: string;
   equipo: string;
-  minutos: number;
-  faltas_cometidas: number;
-  faltas_recibidas: number;
-  amarillas: number;
-  tiros_puerta: number;
-};
+} & Partial<Record<(typeof CAMPOS_NUMERICOS)[number], number>>;
 export type DatosImportacion = { fuente: string; fecha: string; filas: FilaJugador[] };
 export type Importacion = DatosImportacion & { id: string };
 
@@ -393,17 +391,13 @@ export const aApuestaReal = (id: string, c: Record<string, unknown>): ApuestaRea
 };
 
 function aFilaJugador(c: unknown): FilaJugador | null {
-  if (!esObjeto(c) || typeof c.jugador !== 'string' || !c.jugador.trim() || !esNumero(c.minutos)) return null;
-  const n = (v: unknown) => (esNumero(v) && v >= 0 ? v : 0);
-  return {
-    jugador: c.jugador.trim(),
-    equipo: texto(c.equipo).trim(),
-    minutos: n(c.minutos),
-    faltas_cometidas: n(c.faltas_cometidas),
-    faltas_recibidas: n(c.faltas_recibidas),
-    amarillas: n(c.amarillas),
-    tiros_puerta: n(c.tiros_puerta),
-  };
+  if (!esObjeto(c) || typeof c.jugador !== 'string' || !c.jugador.trim()) return null;
+  const fila: FilaJugador = { jugador: c.jugador.trim(), equipo: texto(c.equipo).trim() };
+  for (const campo of CAMPOS_NUMERICOS) {
+    const valor = c[campo];
+    if (esNumero(valor) && valor >= 0) fila[campo] = valor;
+  }
+  return CAMPOS_NUMERICOS.some((campo) => fila[campo] !== undefined) ? fila : null;
 }
 
 export function aDatosImportacion(c: Record<string, unknown>): DatosImportacion | null {

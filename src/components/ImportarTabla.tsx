@@ -132,7 +132,8 @@ export function ImportarTabla() {
     <section className="ajustes__bloque" aria-labelledby="importar-titulo">
       <h2 id="importar-titulo">Importar datos de jugadores</h2>
       <p className="texto-suave ajustes__explicacion">
-        Copia una tabla de una web y pégala aquí, o sube un CSV. Se guarda solo en tu cuenta.
+        Copia una tabla de una web y pégala aquí, o sube un CSV. Se guarda solo en tu cuenta. Puedes importar los
+        datos en varias tablas: se combinan por jugador, y un dato nuevo sustituye al anterior.
       </p>
       <label className="campo">
         <span>Tabla pegada</span>
@@ -151,7 +152,7 @@ export function ImportarTabla() {
       {tabla && (
         <div className="importar">
           <p>
-            Elige qué dato hay en cada columna. Vista previa de{' '}
+            Elige qué dato hay en cada columna; deja sin asignar lo que no traiga la tabla. Vista previa de{' '}
             {Math.min(FILAS_VISTA_PREVIA, tabla.filas.length)} de {tabla.filas.length} filas.
           </p>
           <div className="formulario formulario--tres">
@@ -201,6 +202,8 @@ export function ImportarTabla() {
             <p className="texto-pequeno">
               Se importarán {resultado.filas.length} jugadores
               {resultado.descartadas > 0 && `; ${resultado.descartadas} filas no tienen datos válidos y se descartan`}.
+              {asignacion.minutos === undefined &&
+                ' Esta tabla no trae minutos: un jugador no se usa hasta que alguna de tus tablas los traiga.'}
             </p>
           )}
 
