@@ -1,6 +1,8 @@
 name: Pronósticos
 
 on:
+  schedule:
+    - cron: '0 5 * * *' # 6:00 en invierno y 7:00 en verano, hora de Madrid
   workflow_dispatch:
     inputs:
       modo:
