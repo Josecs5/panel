@@ -72,6 +72,25 @@ def comprobar_uid(almacen) -> None:
     raise RuntimeError("PANEL_UID no corresponde a un usuario con datos del panel: no se ha escrito nada")
 
 
+def resumen_publico(almacen) -> str:
+    """Para el registro público de Actions: solo recuentos, nunca apuestas ni identificadores."""
+    ejecucion = almacen.leer("pronEstado", "ultima") or {}
+    partidos = almacen.listar("pronPartidos")
+    con_cuotas = sum(1 for p in partidos.values() if any(i.get("cuota") for i in p.get("items", {}).values()))
+    return "\n".join(
+        [
+            f"Partidos con pronóstico: {len(partidos)}; con cuotas: {con_cuotas}",
+            f"Congelados: {len(almacen.listar('pronCongelados'))}",
+            f"Jornadas: {len(almacen.listar('pronJornadas'))}",
+            f"Peticiones: {ejecucion.get('peticiones')}",
+            f"OddsPapi este mes: {ejecucion.get('oddsPapi')}",
+            f"ClubElo responde: {ejecucion.get('clubEloResponde')}",
+            f"Errores: {ejecucion.get('errores')}",
+            f"Avisos: {ejecucion.get('avisos')}",
+        ]
+    )
+
+
 def ejecutar_modo_diario(carpeta_datos: Path, estado_json: Path) -> dict:
     """Las claves llegan por variables de entorno desde GitHub Secrets."""
     for nombre in ("FOOTBALL_DATA_TOKEN", "FIREBASE_SERVICE_ACCOUNT", "PANEL_UID"):
@@ -98,6 +117,7 @@ def ejecutar_modo_diario(carpeta_datos: Path, estado_json: Path) -> dict:
     estado = diario.ejecutar_diario(almacen, fd, odds, csv, ahora, catalogo=catalogo)
     # Solo fecha, versión y número de partidos: este archivo es público.
     estado_json.write_text(json.dumps(estado, indent=2) + "\n", encoding="utf-8")
+    print(resumen_publico(almacen))
     return estado
 
 
@@ -122,7 +142,9 @@ def main(argumentos: list[str] | None = None) -> int:
     cuenta, uid = os.environ.get("FIREBASE_SERVICE_ACCOUNT"), os.environ.get("PANEL_UID")
     if cuenta and uid:
         ahora = pd.Timestamp.now(tz="UTC")
-        AlmacenFirestore(cuenta, uid).guardar(
+        almacen = AlmacenFirestore(cuenta, uid)
+        comprobar_uid(almacen)
+        almacen.guardar(
             "pronBacktests",
             ahora.strftime("%Y-%m-%d"),
             {"generado": ahora.isoformat(), **json.loads(json.dumps(resultado, default=str))},
