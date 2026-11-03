@@ -9,12 +9,13 @@ const SECCIONES: { ruta: string; nombre: string; icono: NombreIcono }[] = [
   { ruta: '/cartera', nombre: 'Cartera', icono: 'cartera' },
   { ruta: '/vivienda', nombre: 'Vivienda', icono: 'vivienda' },
   { ruta: '/candidaturas', nombre: 'Candidaturas', icono: 'candidaturas' },
+  { ruta: '/pronosticos', nombre: 'Pronósticos', icono: 'pronosticos' },
   { ruta: '/prompts', nombre: 'Prompts', icono: 'prompts' },
   { ruta: '/ajustes', nombre: 'Ajustes', icono: 'ajustes' },
 ];
 
-// En el móvil, Ajustes y Cerrar sesión van arriba: abajo solo caben seis secciones.
-const SECCIONES_BARRA = SECCIONES.filter(({ ruta }) => ruta !== '/ajustes');
+// En el móvil, Prompts, Ajustes y Cerrar sesión van arriba: abajo solo caben seis secciones.
+const SECCIONES_BARRA = SECCIONES.filter(({ ruta }) => ruta !== '/ajustes' && ruta !== '/prompts');
 
 const claseDeEnlace =
   (base: string) =>
@@ -54,6 +55,9 @@ export function Marco({ children }: { children: ReactNode }) {
 
       <header className="superior">
         <p className="superior__marca">Panel</p>
+        <NavLink to="/prompts" aria-label="Prompts" className={claseDeEnlace('superior__accion')}>
+          <Icono nombre="prompts" />
+        </NavLink>
         <NavLink to="/ajustes" aria-label="Ajustes" className={claseDeEnlace('superior__accion')}>
           <Icono nombre="ajustes" />
         </NavLink>

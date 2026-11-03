@@ -474,6 +474,15 @@ Tres piezas, y ninguna lleva azulejo ni placa.
 - **Activo:** azulejo invertido, con fondo `menu-activo-fondo`, `menu-activo-tinta` y peso 700.
 - **Móvil:** barra superior cobalto con marca y acciones de 44 px; barra inferior sobre `superficie` con regla superior, que marca la sección activa con `acento` y peso 700.
 
+### Pronósticos
+Vista densa de trabajo, sin gestos nuevos: usa las piezas de arriba.
+- **Pestañas:** etiquetas de filtro convertidas en enlaces; la activa, en `cobalto`. Cada vista tiene su ruta.
+- **Tarjeta de partido:** `superficie`, esquinas de 8 px, 16 px y 24 px de relleno, sin sombra. Tres probabilidades en cifra de 1.625rem (1.375rem en móvil), goles esperados y una tabla compacta de rangos. Jugadores y más mercados van en desplegables nativos.
+- **Sin placa:** los partidos no llevan placa de días. Dentro de una jornada todos faltarían menos de 7 días, y la placa dejaría de distinguir nada. Llevan fecha y hora, y la marca de cuándo se congelaron.
+- **Apuesta:** fila con regla superior. La cuota de hoy se escribe en `almagre` si ya no llega a la mínima aceptable.
+- **Muestra pequeña:** texto en `falta-tinta`, debajo del nombre del mercado.
+- **Calibración:** misma receta que el gráfico de series, con la diagonal en `linea-fuerte` y el eje horizontal sin rejilla.
+
 ### Gráfico de series
 - **Series:** Valor con línea recta y Aportado con línea escalonada (sube de golpe el día de la aportación), ambas de 2 px.
 - **Puntos:** radio de 4 px (5 px en hover) con borde de 2 px del color del `fondo`, para separarlos de la línea.

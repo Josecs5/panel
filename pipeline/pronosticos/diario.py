@@ -74,7 +74,9 @@ def leer_ajustes(almacen) -> Ajustes:
         if isinstance(valor, int) and 0 <= valor <= 10:
             setattr(ajustes, destino, valor)
     ajustes.derbis = frozenset(
-        frozenset(normalizar(n) for n in d) for d in crudo.get("derbis", []) if isinstance(d, list) and len(d) == 2
+        frozenset((normalizar(d["local"]), normalizar(d["visitante"])))
+        for d in crudo.get("derbis", [])
+        if isinstance(d, dict) and isinstance(d.get("local"), str) and isinstance(d.get("visitante"), str)
     )
     numeros = {}
     for origen, destino in (
@@ -375,6 +377,8 @@ def liquidar_partidos(almacen, datos: Datos, csv, mapa, ahora: pd.Timestamp) -> 
                 "mercado": item.get("mercado"),
                 "cuota": item.get("cuota"),
             }
+        marcador = ((partido or {}).get("crudo") or {}).get("score") or {}
+        parcial = marcador.get("regularTime") or marcador.get("fullTime") or {}
         resueltos = any(v["estado"] in (GANADA, PERDIDA) for v in items.values())
         if not resueltos and not caducado:
             continue
@@ -385,6 +389,10 @@ def liquidar_partidos(almacen, datos: Datos, csv, mapa, ahora: pd.Timestamp) -> 
                 "competicion": info["competicion"],
                 "inicio": congelado["inicio"],
                 "version": congelado["version"],
+                "local": congelado.get("local"),
+                "visitante": congelado.get("visitante"),
+                "jornada": congelado.get("jornada"),
+                "resultado": {"local": parcial.get("home"), "visitante": parcial.get("away")},
                 "items": items,
                 "fin": pendientes == 0,
                 "actualizado": ahora.isoformat(),

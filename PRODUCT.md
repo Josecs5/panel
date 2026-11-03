@@ -16,7 +16,7 @@ Una sola persona, propietaria del panel. Lo abre a diario en el ordenador, sobre
 
 ## Product Purpose
 
-Panel personal y privado que reúne en un solo sitio plazos, cartera de inversión, convocatorias de vivienda, candidaturas de empleo y una biblioteca de prompts. Tiene éxito si abrirlo cada día basta para saber qué toca hacer, sin mirar otras webs ni hojas de cálculo.
+Panel personal y privado que reúne en un solo sitio plazos, cartera de inversión, convocatorias de vivienda, candidaturas de empleo, pronósticos de fútbol y una biblioteca de prompts. Tiene éxito si abrirlo cada día basta para saber qué toca hacer, sin mirar otras webs ni hojas de cálculo.
 
 ## Positioning
 
@@ -33,7 +33,8 @@ Está hecho para una sola persona y sus datos: ninguna cuenta ajena, ninguna fun
 - Coste cero obligatorio: nada que pida tarjeta ni pueda generar cargos. Prohibido cualquier servicio que exija el plan Blaze.
 - El repositorio es público: ningún dato personal, clave ni UID en archivos versionados.
 - Acceso con usuario y contraseña, sin registro ni recuperación de contraseña. Sin sesión solo se ve el login.
-- Secciones: Inicio, Plazos, Cartera, Vivienda, Candidaturas, Prompts y Ajustes. No se añaden funciones fuera de estas.
+- Secciones: Inicio, Plazos, Cartera, Vivienda, Candidaturas, Pronósticos, Prompts y Ajustes. No se añaden funciones fuera de estas.
+- Pronósticos lo calcula un proceso diario en GitHub Actions (`/pipeline`), que escribe en Firestore con una cuenta de servicio. La web solo lee esos datos y guarda lo que introduce el usuario. El tope de 5 € por jornada es una constante del código. Detalles en `README_PRONOSTICOS.md`.
 - Las listas que revelarían datos personales (municipios de Vivienda y áreas de Candidaturas) viven en Ajustes, en Firestore, nunca en el código.
 - Solo se admiten las dependencias autorizadas por el propietario; para cualquier otra se pregunta antes.
 - Si una API falla o falta la clave, se muestra el último dato guardado con su hora y un aviso. La página nunca se rompe.

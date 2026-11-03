@@ -1692,6 +1692,549 @@ a {
   }
 }
 
+/* Pronósticos */
+
+.pestanas {
+  margin-bottom: calc(var(--m) * 3);
+}
+
+.etiqueta[aria-current='page'] {
+  background: var(--cobalto);
+  color: #ffffff;
+  box-shadow: none;
+}
+
+a.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.pronosticos__nota {
+  margin-bottom: calc(var(--m) * 3);
+  max-width: 75ch;
+  font-size: 0.875rem;
+}
+
+.pronosticos__seccion {
+  margin-bottom: calc(var(--m) * 5);
+  display: grid;
+  gap: calc(var(--m) * 1.5);
+}
+
+.seccion__nombre {
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.partidos,
+.pendientes {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: calc(var(--m) * 2);
+  list-style: none;
+}
+
+.partido {
+  padding: calc(var(--m) * 2) calc(var(--m) * 3);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(var(--m) * 2);
+  background: var(--superficie);
+  border-radius: 8px;
+}
+
+.partido__cabecera {
+  display: grid;
+  gap: 2px;
+}
+
+.partido__titulo {
+  margin: 0;
+  color: var(--tinta);
+  font-size: 1.125rem;
+  line-height: 1.3;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.partido__cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 3fr) minmax(0, 4fr);
+  gap: calc(var(--m) * 4);
+  align-items: start;
+}
+
+.signos {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--m) * 2);
+}
+
+.signo dt {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.signo dd {
+  margin: 0;
+}
+
+.signo__prob {
+  font-size: 1.625rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.partido__goles {
+  margin: 0;
+  display: grid;
+  gap: calc(var(--m) * 1.5);
+}
+
+.partido__goles dd {
+  margin: 0;
+}
+
+.partido__dato {
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.partido__marcadores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px calc(var(--m) * 1.5);
+  font-size: 0.875rem;
+}
+
+.tabla--compacta th,
+.tabla--compacta td {
+  padding: calc(var(--m) * 0.75) var(--m);
+}
+
+.tabla--compacta tbody th {
+  font-weight: 400;
+}
+
+.tabla__casa {
+  display: block;
+  color: var(--tinta-suave);
+  font-size: 0.75rem;
+}
+
+.tabla-marco--ancha {
+  max-width: 100%;
+}
+
+.desplegable {
+  min-width: 0;
+  border-top: 1px solid var(--linea);
+  padding-top: calc(var(--m) * 1.5);
+}
+
+.desplegable summary {
+  min-height: calc(var(--m) * 3);
+  color: var(--acento);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.desplegable[open] summary {
+  margin-bottom: calc(var(--m) * 1.5);
+}
+
+.jugadores {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(var(--m) * 3);
+}
+
+.jugadores__titulo {
+  margin: 0 0 var(--m);
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.jugadores__lista {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--m);
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.jugadores__lista li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 var(--m);
+}
+
+.jugadores__prob {
+  font-weight: 700;
+}
+
+.boleto__resumen {
+  margin-bottom: calc(var(--m) * 3);
+  display: grid;
+  gap: var(--m);
+}
+
+.boleto__tope {
+  color: var(--tinta-suave);
+  font-size: 1.125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.apuestas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apuesta {
+  padding: calc(var(--m) * 2) 0;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
+  gap: calc(var(--m) * 2) calc(var(--m) * 4);
+  align-items: start;
+  border-top: 1px solid var(--linea);
+}
+
+.apuesta__selecciones {
+  display: grid;
+  gap: calc(var(--m) * 1.5);
+}
+
+.apuesta__tipo {
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.seleccion__cuotas {
+  font-size: 0.875rem;
+}
+
+.apuesta__datos {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--m) calc(var(--m) * 2);
+}
+
+.apuesta__datos dt {
+  color: var(--tinta-suave);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.apuesta__datos dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.apuesta__stake {
+  font-weight: 700;
+}
+
+.apuesta__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--m);
+  justify-content: flex-end;
+}
+
+.apuesta__estado {
+  width: 100%;
+  font-size: 0.875rem;
+  text-align: right;
+}
+
+.apuesta__formulario {
+  grid-column: 1 / -1;
+  padding: calc(var(--m) * 2);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 200px)) minmax(0, 1fr);
+  gap: var(--m) calc(var(--m) * 2);
+  align-items: end;
+  background: var(--superficie);
+  border-radius: 8px;
+}
+
+.apuesta__error {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.historial {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historial__partido {
+  padding: calc(var(--m) * 1.5) 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--m) calc(var(--m) * 4);
+  border-top: 1px solid var(--linea);
+}
+
+.historial__dato {
+  font-size: 0.875rem;
+}
+
+.campo--enlinea {
+  grid-auto-flow: row;
+}
+
+.campo--enlinea select {
+  min-height: calc(var(--m) * 5);
+}
+
+.tabla__nombre-mercado {
+  display: block;
+  font-weight: 600;
+}
+
+.auditoria__muestra {
+  display: block;
+  color: var(--falta-tinta);
+  font-weight: 400;
+}
+
+.auditoria__dos {
+  margin-bottom: calc(var(--m) * 5);
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: calc(var(--m) * 5);
+  align-items: start;
+}
+
+.auditoria__dos .pronosticos__seccion {
+  margin-bottom: 0;
+}
+
+.auditoria__lateral {
+  display: grid;
+  gap: calc(var(--m) * 3);
+}
+
+.sin-datos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.sin-datos li {
+  padding: var(--m) 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 calc(var(--m) * 3);
+  border-top: 1px solid var(--linea);
+}
+
+.sin-datos span:first-child {
+  font-weight: 600;
+}
+
+.auditoria__lateral > .bloque:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.auditoria__lateral h2 {
+  color: var(--tinta-suave);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.grafico__lienzo--cuadrado {
+  height: 360px;
+}
+
+.versiones {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.versiones li {
+  padding: calc(var(--m) * 1.5) 0;
+  max-width: 75ch;
+  display: grid;
+  gap: 2px;
+  border-top: 1px solid var(--linea);
+  font-size: 0.875rem;
+}
+
+.pendiente__formulario {
+  padding-top: calc(var(--m) * 2);
+  display: grid;
+  gap: calc(var(--m) * 1.5);
+  border-top: 1px solid var(--linea);
+}
+
+.estadisticas-cl {
+  max-width: 520px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 112px 112px;
+  gap: var(--m) calc(var(--m) * 2);
+  align-items: end;
+}
+
+.estadisticas-cl__fila {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.preguntas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pregunta {
+  padding: var(--m) 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--m) calc(var(--m) * 2);
+  border-top: 1px solid var(--linea);
+  font-size: 0.875rem;
+}
+
+.ajustes__bloque {
+  display: grid;
+  gap: calc(var(--m) * 2);
+}
+
+.ajustes__bloque h2 {
+  margin-bottom: 0;
+}
+
+.ajustes__bloque .ajustes__explicacion {
+  margin-bottom: 0;
+}
+
+.dudas {
+  display: grid;
+  gap: calc(var(--m) * 1.5);
+}
+
+.importaciones {
+  margin-top: calc(var(--m) * 2);
+}
+
+.plazo--sin-placa {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.datos-ejecucion {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: calc(var(--m) * 2) calc(var(--m) * 3);
+}
+
+.datos-ejecucion dt {
+  color: var(--tinta-suave);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.datos-ejecucion dd {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.lista-errores {
+  list-style: none;
+}
+
+@media (max-width: 1279px) {
+  .partido__cuerpo {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .signos {
+    grid-column: 1 / -1;
+  }
+
+  .apuesta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .apuesta__acciones {
+    justify-content: flex-start;
+  }
+
+  .apuesta__estado {
+    text-align: left;
+  }
+
+  .jugadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .partido {
+    padding: calc(var(--m) * 2);
+  }
+
+  .tabla--compacta th,
+  .tabla--compacta td {
+    padding-right: calc(var(--m) / 2);
+    padding-left: calc(var(--m) / 2);
+  }
+
+  .partido__cuerpo,
+  .auditoria__dos,
+  .historial__partido,
+  .apuesta__formulario {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .signo__prob {
+    font-size: 1.375rem;
+  }
+
+  .jugadores {
+    grid-template-columns: minmax(0, 1fr);
+    gap: calc(var(--m) * 2);
+  }
+
+  .apuesta__datos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .estadisticas-cl {
+    grid-template-columns: minmax(0, 1fr) 80px 80px;
+  }
+
+  .grafico__lienzo--cuadrado {
+    height: 300px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;

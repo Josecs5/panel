@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { BloqueAportacion, BloqueNasdaq, BloqueValorCartera } from '../components/BloquesCartera';
+import { BloquePronosticos } from '../components/BloquePronosticos';
 import { Cabecera } from '../components/Cabecera';
 import { ResumenPlazo } from '../components/PlazoVista';
 import { aCandidatura, ETIQUETA_FASE, proximosPasos } from '../lib/candidaturas';
@@ -96,6 +97,7 @@ export function Inicio() {
           <section className="bloque" aria-labelledby="inicio-mercado">
             <BloqueNasdaq id="inicio-mercado" />
           </section>
+          <BloquePronosticos uid={uid} />
           <section className="bloque" aria-labelledby="inicio-vivienda">
             <div className="seccion__titulo seccion__titulo--junto">
               <h2 id="inicio-vivienda">Convocatorias de vivienda abiertas</h2>

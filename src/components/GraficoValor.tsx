@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { serieValorAportado, type Aportacion, type Liquidativo, type Posicion } from '../lib/cartera';
 import { fechaCorta, fechaLarga } from '../lib/fechas';
 import { moneda } from '../lib/formato';
+import { useModoOscuro } from '../lib/useModoOscuro';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, Tooltip);
 Chart.defaults.font.family = "'Hanken Grotesk', system-ui, sans-serif";
@@ -56,17 +57,6 @@ const lineaVertical: Plugin<'line'> = {
     ctx.restore();
   },
 };
-
-function useModoOscuro() {
-  const [oscuro, setOscuro] = useState(() => matchMedia('(prefers-color-scheme: dark)').matches);
-  useEffect(() => {
-    const consulta = matchMedia('(prefers-color-scheme: dark)');
-    const cambiar = () => setOscuro(consulta.matches);
-    consulta.addEventListener('change', cambiar);
-    return () => consulta.removeEventListener('change', cambiar);
-  }, []);
-  return oscuro;
-}
 
 export default function GraficoValor({
   fondos,

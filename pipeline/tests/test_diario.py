@@ -280,6 +280,10 @@ def test_liquida_goles_al_terminar_y_estadisticas_cuando_llegan_los_csv(escenari
     siguiente = AHORA + pd.Timedelta(days=1)
     ejecutar(almacen, fd, csv, odds, siguiente)
     items = almacen.leer("pronLiquidaciones", "1")["items"]
+    documento = almacen.leer("pronLiquidaciones", "1")
+    assert documento["local"] == "Club 0 FC" and documento["visitante"] == "Club 1 FC"
+    assert documento["resultado"] == {"local": 2, "visitante": 1}
+    assert documento["jornada"] == "2026-W46"
     assert items["1"]["estado"] == "ganada"
     assert items["2"]["estado"] == "perdida"
     assert items["o25"]["estado"] == "ganada"
@@ -417,7 +421,7 @@ def test_los_ajustes_invalidos_se_ignoran_y_pinnacle_no_es_casa_de_apuesta():
             "maxDestacadosChampions": 2,
             "veMinimo": -1,
             "probMinima": 0.3,
-            "derbis": [["Real Madrid CF", "Club Atlético de Madrid"], ["solo uno"]],
+            "derbis": [{"local": "Real Madrid CF", "visitante": "Club Atlético de Madrid"}, {"local": "solo uno"}],
             "topeJornada": 10000,
         },
     )

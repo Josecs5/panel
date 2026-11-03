@@ -3,6 +3,14 @@ import type { Ajustes } from './ajustes.ts';
 import { aDatosCandidatura } from './candidaturas.ts';
 import { aDatosAportacion, aDatosLiquidativo, aDatosPosicion } from './cartera.ts';
 import { aDatosPlazo } from './plazos.ts';
+import {
+  aAjustesPronosticos,
+  aDatosApuesta,
+  aDatosComprobacion,
+  aDatosEstadisticasCL,
+  aDatosImportacion,
+  type AjustesPronosticos,
+} from './pronosticos.ts';
 import { aDatosPrompt } from './prompts.ts';
 import { aDatosConvocatoria } from './vivienda.ts';
 
@@ -14,6 +22,10 @@ export const COLECCIONES = [
   'vivienda',
   'candidaturas',
   'prompts',
+  'pronApuestas',
+  'pronImportaciones',
+  'pronEstadisticasCL',
+  'pronComprobaciones',
 ] as const;
 export type Coleccion = (typeof COLECCIONES)[number];
 
@@ -23,6 +35,7 @@ export type Copia = {
   version: 1;
   exportadoEn?: string;
   ajustes?: Partial<Ajustes>;
+  ajustesPronosticos?: AjustesPronosticos;
 } & Partial<Record<Coleccion, Elemento[]>>;
 
 export const NOMBRES: Record<Coleccion, string> = {
@@ -33,6 +46,10 @@ export const NOMBRES: Record<Coleccion, string> = {
   vivienda: 'convocatorias de vivienda',
   candidaturas: 'candidaturas',
   prompts: 'prompts',
+  pronApuestas: 'apuestas',
+  pronImportaciones: 'importaciones de jugadores',
+  pronEstadisticasCL: 'estadísticas de Champions',
+  pronComprobaciones: 'comprobaciones de jugadores',
 };
 
 type Resultado = { ok: true; copia: Copia } | { ok: false; error: string };
@@ -68,6 +85,11 @@ export function leerCopia(texto: string): Resultado {
       copia.ajustes = aAjustesParciales(valor);
       continue;
     }
+    if (clave === 'ajustesPronosticos') {
+      if (!esObjeto(valor)) return fallo('La sección "ajustesPronosticos" no es válida.');
+      copia.ajustesPronosticos = aAjustesPronosticos(valor);
+      continue;
+    }
     if (!COLECCIONES.includes(clave as Coleccion)) {
       return fallo(`El archivo contiene una sección desconocida: "${clave}".`);
     }
@@ -101,6 +123,18 @@ export function leerCopia(texto: string): Resultado {
       }
       if (clave === 'prompts' && !aDatosPrompt(campos)) {
         return fallo(`${posicion}: necesita título y texto.`);
+      }
+      if (clave === 'pronApuestas' && !aDatosApuesta(campos)) {
+        return fallo(`${posicion}: necesita estado, selecciones y, si está hecha, cuota y stake.`);
+      }
+      if (clave === 'pronImportaciones' && !aDatosImportacion(campos)) {
+        return fallo(`${posicion}: necesita fecha y al menos un jugador con minutos.`);
+      }
+      if (clave === 'pronEstadisticasCL' && !aDatosEstadisticasCL(campos)) {
+        return fallo(`${posicion}: necesita los ocho conteos del partido.`);
+      }
+      if (clave === 'pronComprobaciones' && !aDatosComprobacion(campos)) {
+        return fallo(`${posicion}: necesita las respuestas.`);
       }
       elementos.push(id === undefined ? campos : { id, ...campos });
     }

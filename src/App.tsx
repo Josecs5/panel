@@ -9,6 +9,7 @@ import { Inicio } from './pages/Inicio';
 import { Login } from './pages/Login';
 import { Plazos } from './pages/Plazos';
 import { Prompts } from './pages/Prompts';
+import { Pronosticos } from './pages/Pronosticos';
 import { Vivienda } from './pages/Vivienda';
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/cartera" element={<Cartera />} />
           <Route path="/vivienda" element={<Vivienda />} />
           <Route path="/candidaturas" element={<Candidaturas />} />
+          <Route path="/pronosticos/*" element={<Pronosticos />} />
           <Route path="/prompts" element={<Prompts />} />
           <Route path="/ajustes" element={<Ajustes />} />
           <Route path="*" element={<Navigate to="/" replace />} />
