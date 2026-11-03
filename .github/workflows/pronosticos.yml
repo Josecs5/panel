@@ -1,0 +1,51 @@
+name: Pronósticos
+
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: Qué ejecutar
+        type: choice
+        options: [backtest]
+        default: backtest
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pronosticos
+  cancel-in-progress: false
+
+jobs:
+  pronosticos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+      - run: pip install -r pipeline/requirements.txt
+
+      - name: Pruebas del pipeline
+        working-directory: pipeline
+        run: python -m pytest tests -q
+
+      # Los datos importados se guardan aquí, nunca en el repo público
+      - uses: actions/cache@v6
+        with:
+          path: pipeline/datos
+          key: datos-${{ github.run_id }}
+          restore-keys: datos-
+
+      - name: Bajar los CSV
+        run: bash pipeline/bajar_csv.sh pipeline/datos/csv
+
+      - name: Ejecutar
+        working-directory: pipeline
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+          MODO: ${{ inputs.modo }}
+        run: python -m pronosticos.main "$MODO" --datos datos

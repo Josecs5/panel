@@ -22,3 +22,9 @@ ui-debug.log*
 
 # Capturas de las pruebas de navegador
 .playwright-mcp/
+
+# Pipeline de Pronósticos: entorno y datos importados, nunca al repo
+pipeline/.venv/
+pipeline/datos/
+__pycache__/
+.pytest_cache/
