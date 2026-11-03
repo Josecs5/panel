@@ -30,7 +30,7 @@ from .auditoria.liquidar import (
 from .config import COMPETICIONES_ELO, MAX_DESTACADOS_CHAMPIONS, MAX_DESTACADOS_LIGA, Umbrales
 from .destacados import puntuar
 from .fuentes import clubelo
-from .fuentes.emparejar import emparejar_cuotas, mapa_fd_a_csv, normalizar
+from .fuentes.emparejar import emparejar_cuotas, mapa_fd_a_csv, normalizar, parecido
 from .fuentes.football_data_org import a_tabla
 from .fuentes.oddspapi import ClienteOddsPapi, ContadorPeticiones, CuotaAgotada, antes_del_inicio, lineas_de_partido
 from .jornada import clave_jornada
@@ -208,6 +208,26 @@ def preparar_csv(csv: pd.DataFrame | None, tabla: pd.DataFrame, ahora: pd.Timest
     for columna in ("al", "av", "rl", "rv"):
         unido[columna] = pd.to_numeric(unido[columna], errors="coerce")
     return bt.preparar(unido).reset_index(drop=True), mapa, ligas
+
+
+def revisar_emparejamiento(crudos: dict[int, dict], mapa: dict[int, str], avisos: list[str]) -> dict:
+    """Un equipo sin nombre en los CSV usaría fuerzas por defecto sin que nada fallara."""
+    resumen: dict[str, dict] = {}
+    parejas: list[tuple[float, str, str]] = []
+    for liga in pr.LIGAS:
+        equipos: dict[int, str] = {}
+        for partido in crudos.values():
+            if partido["competicion"] == liga:
+                equipos[partido["id_local"]] = partido["local"]
+                equipos[partido["id_visitante"]] = partido["visitante"]
+        faltan = sorted(nombre for equipo, nombre in equipos.items() if equipo not in mapa)
+        resumen[liga] = {"equipos": len(equipos), "conCsv": len(equipos) - len(faltan)}
+        if faltan:
+            avisos.append(f"{liga}: equipos sin nombre en los CSV: {', '.join(faltan)}")
+        parejas += [(parecido(n, mapa[e]), n, mapa[e]) for e, n in equipos.items() if e in mapa]
+    parejas.sort(key=lambda fila: fila[0])
+    resumen["menosParecidos"] = [f"{a} = {b}" for _, a, b in parejas[:15]]
+    return resumen
 
 
 def elo_y_champions(tabla: pd.DataFrame) -> tuple[Elo, pd.DataFrame]:
@@ -568,6 +588,7 @@ def ejecutar_diario(almacen, fd, odds, csv: pd.DataFrame | None, ahora: pd.Times
     avisos.extend(datos.avisos)
     referencia = ahora.tz_localize(None)
     csv_preparado, mapa, ligas = preparar_csv(csv, datos.tabla, ahora)
+    emparejados = revisar_emparejamiento(datos.crudos, mapa, avisos)
     motor_elo, tabla_cl = elo_y_champions(datos.tabla[datos.tabla["fecha"] < referencia])
 
     # 1. Liquidar y auditar lo ya jugado
@@ -696,6 +717,7 @@ def ejecutar_diario(almacen, fd, odds, csv: pd.DataFrame | None, ahora: pd.Times
             "peticiones": peticiones,
             "oddsPapi": oddspapi,
             "clubEloResponde": responde,
+            "emparejados": emparejados,
             "ultimaImportacion": ultima_importacion,
         },
         unir=False,

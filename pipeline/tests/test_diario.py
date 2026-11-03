@@ -444,3 +444,14 @@ def test_un_uid_sin_datos_del_panel_para_la_ejecucion_sin_escribir():
     con_plazos = AlmacenMemoria()
     con_plazos.guardar("plazos", "a", {"titulo": "x"})
     comprobar_uid(con_plazos)
+
+
+def test_avisa_si_un_equipo_no_tiene_nombre_en_los_csv():
+    crudos = {
+        1: {"competicion": "PL", "id_local": 10, "id_visitante": 20, "local": "Everton FC", "visitante": "Recien Subido FC"},
+    }
+    avisos = []
+    resumen = diario.revisar_emparejamiento(crudos, {10: "Everton"}, avisos)
+    assert resumen["PL"] == {"equipos": 2, "conCsv": 1}
+    assert avisos == ["PL: equipos sin nombre en los CSV: Recien Subido FC"]
+    assert resumen["menosParecidos"] == ["Everton FC = Everton"]

@@ -85,6 +85,7 @@ def resumen_publico(almacen) -> str:
             f"Peticiones: {ejecucion.get('peticiones')}",
             f"OddsPapi este mes: {ejecucion.get('oddsPapi')}",
             f"ClubElo responde: {ejecucion.get('clubEloResponde')}",
+            f"Equipos emparejados con los CSV: {ejecucion.get('emparejados')}",
             f"Errores: {ejecucion.get('errores')}",
             f"Avisos: {ejecucion.get('avisos')}",
         ]
